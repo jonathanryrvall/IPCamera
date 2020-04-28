@@ -4,16 +4,15 @@ using SimpleRtspPlayer.RawFramesReceiving;
 
 namespace SimpleRtspPlayer.GUI.Models
 {
-    class MainWindowModel : IMainWindowModel
+    class MainWindowModel
     {
         private readonly RealtimeVideoSource _realtimeVideoSource = new RealtimeVideoSource();
-        private readonly RealtimeAudioSource _realtimeAudioSource = new RealtimeAudioSource();
-
-        private IRawFramesSource _rawFramesSource;
+       
+        private RawFramesSource _rawFramesSource;
 
         public event EventHandler<string> StatusChanged;
 
-        public IVideoSource VideoSource => _realtimeVideoSource;
+        public RealtimeVideoSource VideoSource => _realtimeVideoSource;
 
         public void Start(ConnectionParameters connectionParameters)
         {
@@ -24,8 +23,7 @@ namespace SimpleRtspPlayer.GUI.Models
             _rawFramesSource.ConnectionStatusChanged += ConnectionStatusChanged;
 
             _realtimeVideoSource.SetRawFramesSource(_rawFramesSource);
-            _realtimeAudioSource.SetRawFramesSource(_rawFramesSource);
-
+       
             _rawFramesSource.Start();
         }
 

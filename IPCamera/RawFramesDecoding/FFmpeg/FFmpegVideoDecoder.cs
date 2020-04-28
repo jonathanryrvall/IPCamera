@@ -43,7 +43,7 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
             return new FFmpegVideoDecoder(videoCodecId, decoderPtr);
         }
 
-        public unsafe IDecodedVideoFrame TryDecode(RawVideoFrame rawVideoFrame)
+        public unsafe DecodedVideoFrame TryDecode(RawVideoFrame rawVideoFrame)
         {
             fixed (byte* rawBufferPtr = &rawVideoFrame.FrameSegment.Array[rawVideoFrame.FrameSegment.Offset])
             {

@@ -15,7 +15,7 @@ namespace SimpleRtspPlayer.GUI.ViewModels
         private const string HttpPrefix = "http://";
 
         private string _status = string.Empty;
-        private readonly IMainWindowModel _mainWindowModel;
+        private readonly MainWindowModel _mainWindowModel;
         private bool _startButtonEnabled = true;
         private bool _stopButtonEnabled;
 
@@ -24,7 +24,7 @@ namespace SimpleRtspPlayer.GUI.ViewModels
         public string Login { get; set; } = "admin";
         public string Password { get; set; } = "123456";
 
-        public IVideoSource VideoSource => _mainWindowModel.VideoSource;
+        public RealtimeVideoSource VideoSource => _mainWindowModel.VideoSource;
 
         public RelayCommand StartClickCommand { get; }
         public RelayCommand StopClickCommand { get; }
@@ -42,7 +42,7 @@ namespace SimpleRtspPlayer.GUI.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public MainWindowViewModel(IMainWindowModel mainWindowModel)
+        public MainWindowViewModel(MainWindowModel mainWindowModel)
         {
             _mainWindowModel = mainWindowModel ?? throw new ArgumentNullException(nameof(mainWindowModel));
             

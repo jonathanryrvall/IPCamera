@@ -2,7 +2,7 @@
 
 namespace SimpleRtspPlayer.RawFramesDecoding.DecodedFrames
 {
-    class DecodedVideoFrame : IDecodedVideoFrame
+    public class DecodedVideoFrame
     {
         private readonly Action<IntPtr, int, TransformParameters> _transformAction;
 

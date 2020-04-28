@@ -8,16 +8,16 @@ using SimpleRtspPlayer.RawFramesReceiving;
 
 namespace SimpleRtspPlayer.GUI
 {
-    class RealtimeVideoSource : IVideoSource, IDisposable
+    public class RealtimeVideoSource : IDisposable
     {
-        private IRawFramesSource _rawFramesSource;
+        private RawFramesSource _rawFramesSource;
 
         private readonly Dictionary<FFmpegVideoCodecId, FFmpegVideoDecoder> _videoDecodersMap =
             new Dictionary<FFmpegVideoCodecId, FFmpegVideoDecoder>();
 
-        public event EventHandler<IDecodedVideoFrame> FrameReceived;
+        public event EventHandler<DecodedVideoFrame> FrameReceived;
 
-        public void SetRawFramesSource(IRawFramesSource rawFramesSource)
+        public void SetRawFramesSource(RawFramesSource rawFramesSource)
         {
             if (_rawFramesSource != null)
             {
@@ -53,7 +53,7 @@ namespace SimpleRtspPlayer.GUI
 
             FFmpegVideoDecoder decoder = GetDecoderForFrame(rawVideoFrame);
 
-            IDecodedVideoFrame decodedFrame = decoder.TryDecode(rawVideoFrame);
+            DecodedVideoFrame decodedFrame = decoder.TryDecode(rawVideoFrame);
 
             if (decodedFrame != null)
                 FrameReceived?.Invoke(this, decodedFrame);

@@ -8,7 +8,7 @@ using RtspClientSharp.Rtsp;
 
 namespace SimpleRtspPlayer.RawFramesReceiving
 {
-    class RawFramesSource : IRawFramesSource
+    public class RawFramesSource 
     {
         private static readonly TimeSpan RetryDelay = TimeSpan.FromSeconds(5);
         private readonly ConnectionParameters _connectionParameters;

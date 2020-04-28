@@ -28,13 +28,13 @@ namespace SimpleRtspPlayer.GUI.Views
         private int _height;
         private Int32Rect _dirtyRect;
         private TransformParameters _transformParameters;
-        private readonly Action<IDecodedVideoFrame> _invalidateAction;
+        private readonly Action<DecodedVideoFrame> _invalidateAction;
 
         private Task _handleSizeChangedTask = Task.CompletedTask;
         private CancellationTokenSource _resizeCancellationTokenSource = new CancellationTokenSource();
 
         public static readonly DependencyProperty VideoSourceProperty = DependencyProperty.Register(nameof(VideoSource),
-            typeof(IVideoSource),
+            typeof(RealtimeVideoSource),
             typeof(VideoView),
             new FrameworkPropertyMetadata(OnVideoSourceChanged));
 
@@ -43,9 +43,9 @@ namespace SimpleRtspPlayer.GUI.Views
             typeof(VideoView),
             new FrameworkPropertyMetadata(DefaultFillColor, OnFillColorPropertyChanged));
 
-        public IVideoSource VideoSource
+        public RealtimeVideoSource VideoSource
         {
-            get => (IVideoSource)GetValue(VideoSourceProperty);
+            get => (RealtimeVideoSource)GetValue(VideoSourceProperty);
             set => SetValue(VideoSourceProperty, value);
         }
 
@@ -133,19 +133,19 @@ namespace SimpleRtspPlayer.GUI.Views
         {
             var view = (VideoView)d;
 
-            if (e.OldValue is IVideoSource oldVideoSource)
+            if (e.OldValue is RealtimeVideoSource oldVideoSource)
                 oldVideoSource.FrameReceived -= view.OnFrameReceived;
 
-            if (e.NewValue is IVideoSource newVideoSource)
+            if (e.NewValue is RealtimeVideoSource newVideoSource)
                 newVideoSource.FrameReceived += view.OnFrameReceived;
         }
 
-        private void OnFrameReceived(object sender, IDecodedVideoFrame decodedFrame)
+        private void OnFrameReceived(object sender, DecodedVideoFrame decodedFrame)
         {
             Application.Current.Dispatcher.Invoke(_invalidateAction, DispatcherPriority.Send, decodedFrame);
         }
 
-        private void Invalidate(IDecodedVideoFrame decodedVideoFrame)
+        private void Invalidate(DecodedVideoFrame decodedVideoFrame)
         {
             if (_width == 0 || _height == 0)
                 return;
