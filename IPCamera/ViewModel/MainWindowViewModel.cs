@@ -5,29 +5,22 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using GalaSoft.MvvmLight.Command;
 using RtspClientSharp;
-using SimpleRtspPlayer.GUI.Models;
+using SimpleRtspPlayer.RawFramesReceiving;
 
 namespace SimpleRtspPlayer.GUI.ViewModels
 {
     class MainWindowViewModel : INotifyPropertyChanged
     {
-        private const string RtspPrefix = "rtsp://";
-        private const string HttpPrefix = "http://";
-
         private string _status = string.Empty;
-        private readonly MainWindowModel _mainWindowModel;
-        private bool _startButtonEnabled = true;
-        private bool _stopButtonEnabled;
+      
 
         public string DeviceAddress { get; set; } = "rtsp://admin:admins@192.168.1.101/user=admin_password=_channel=1_stream=0.sdp";
 
         public string Login { get; set; } = "admin";
         public string Password { get; set; } = "123456";
 
-        public RealtimeVideoSource VideoSource => _mainWindowModel.VideoSource;
-
+      
         public RelayCommand StartClickCommand { get; }
-        public RelayCommand StopClickCommand { get; }
         public RelayCommand<CancelEventArgs> ClosingCommand { get; }
 
         public string Status
@@ -42,12 +35,10 @@ namespace SimpleRtspPlayer.GUI.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public MainWindowViewModel(MainWindowModel mainWindowModel)
+        public MainWindowViewModel()
         {
-            _mainWindowModel = mainWindowModel ?? throw new ArgumentNullException(nameof(mainWindowModel));
             
-            StartClickCommand = new RelayCommand(OnStartButtonClick, () => _startButtonEnabled);
-            StopClickCommand = new RelayCommand(OnStopButtonClick, () => _stopButtonEnabled);
+            StartClickCommand = new RelayCommand(OnStartButtonClick);
             ClosingCommand = new RelayCommand<CancelEventArgs>(OnClosing);
         }
 
@@ -58,12 +49,10 @@ namespace SimpleRtspPlayer.GUI.ViewModels
 
         private void OnStartButtonClick()
         {
-            string address = DeviceAddress;
+         
+           
 
-            if (!address.StartsWith(RtspPrefix) && !address.StartsWith(HttpPrefix))
-                address = RtspPrefix + address;
-
-            if (!Uri.TryCreate(address, UriKind.Absolute, out Uri deviceUri))
+            if (!Uri.TryCreate(DeviceAddress, UriKind.Absolute, out Uri deviceUri))
             {
                 MessageBox.Show("Invalid device address", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -77,26 +66,13 @@ namespace SimpleRtspPlayer.GUI.ViewModels
             connectionParameters.RtpTransport = RtpTransportProtocol.UDP;
             connectionParameters.CancelTimeout = TimeSpan.FromSeconds(1);
 
-            _mainWindowModel.Start(connectionParameters);
-            _mainWindowModel.StatusChanged += MainWindowModelOnStatusChanged;
+            Start(connectionParameters);
+            StatusChanged += MainWindowModelOnStatusChanged;
 
-            _startButtonEnabled = false;
-            StartClickCommand.RaiseCanExecuteChanged();
-            _stopButtonEnabled = true;
-            StopClickCommand.RaiseCanExecuteChanged();
+    
         }
 
-        private void OnStopButtonClick()
-        {
-            _mainWindowModel.Stop();
-            _mainWindowModel.StatusChanged -= MainWindowModelOnStatusChanged;
-
-            _stopButtonEnabled = false;
-            StopClickCommand.RaiseCanExecuteChanged();
-            _startButtonEnabled = true;
-            StartClickCommand.RaiseCanExecuteChanged();
-            Status = string.Empty;
-        }
+      
 
         private void MainWindowModelOnStatusChanged(object sender, string s)
         {
@@ -105,7 +81,56 @@ namespace SimpleRtspPlayer.GUI.ViewModels
 
         private void OnClosing(CancelEventArgs args)
         {
-            _mainWindowModel.Stop();
+           // _mainWindowModel.Stop();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        private readonly RealtimeVideoSource _realtimeVideoSource = new RealtimeVideoSource();
+
+        private RawFramesSource _rawFramesSource;
+
+        public event EventHandler<string> StatusChanged;
+
+        public RealtimeVideoSource VideoSource => _realtimeVideoSource;
+
+        public void Start(ConnectionParameters connectionParameters)
+        {
+            if (_rawFramesSource != null)
+                return;
+
+            _rawFramesSource = new RawFramesSource(connectionParameters);
+            _rawFramesSource.ConnectionStatusChanged += ConnectionStatusChanged;
+
+            _realtimeVideoSource.SetRawFramesSource(_rawFramesSource);
+
+            _rawFramesSource.Start();
+        }
+
+        public void Stop()
+        {
+            if (_rawFramesSource == null)
+                return;
+
+            _rawFramesSource.Stop();
+            _realtimeVideoSource.SetRawFramesSource(null);
+            _rawFramesSource = null;
+        }
+
+        private void ConnectionStatusChanged(object sender, string s)
+        {
+            StatusChanged?.Invoke(this, s);
         }
     }
 }

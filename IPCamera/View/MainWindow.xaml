@@ -79,9 +79,6 @@
                     Command="{Binding StopClickCommand}"
                     Content="Stop" />
         </StackPanel>
-        <TextBlock Grid.Row="3"
-                   Margin="2"
-                   Text="Supported codecs: H264/MJPEG; Use &quot;http:&#47;&#47;&quot; prefix in address to connect through HTTP tunnel" />
         <TextBlock Grid.Row="4"
                    Height="20"
                    Margin="2"

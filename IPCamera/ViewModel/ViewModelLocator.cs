@@ -1,5 +1,4 @@
 ﻿using System;
-using SimpleRtspPlayer.GUI.Models;
 using SimpleRtspPlayer.GUI.ViewModels;
 
 namespace SimpleRtspPlayer
@@ -13,8 +12,7 @@ namespace SimpleRtspPlayer
 
         private static MainWindowViewModel CreateMainWindowViewModel()
         {
-            var model = new MainWindowModel();
-            return new MainWindowViewModel(model);
+            return new MainWindowViewModel();
         }
     }
 }

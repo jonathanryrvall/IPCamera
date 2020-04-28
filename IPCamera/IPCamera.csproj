@@ -124,7 +124,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\MainWindowModel.cs" />
     <Compile Include="Model\DecodedVideoFrame.cs" />
     <Compile Include="Model\DecodedVideoFrameParameters.cs" />
     <Compile Include="Model\DecoderException.cs" />
@@ -206,10 +205,7 @@
     <Content Include="x86\swresample-3.dll" />
     <Content Include="x86\swscale-5.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="GUI\" />
-    <Folder Include="RawFramesReceiving\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent Condition="'$(Platform)' == 'x86'">
