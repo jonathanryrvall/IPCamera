@@ -124,26 +124,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="GUI\AddressValidationRule.cs" />
-    <Compile Include="GUI\Models\MainWindowModel.cs" />
-    <Compile Include="RawFramesDecoding\DecodedFrames\DecodedVideoFrame.cs" />
-    <Compile Include="RawFramesDecoding\DecodedVideoFrameParameters.cs" />
-    <Compile Include="RawFramesDecoding\DecoderException.cs" />
-    <Compile Include="RawFramesDecoding\FFmpeg\FFmpegDecodedVideoScaler.cs" />
-    <Compile Include="RawFramesDecoding\FFmpeg\FFmpegVideoDecoder.cs" />
-    <Compile Include="RawFramesDecoding\FFmpeg\FFmpegVideoPInvoke.cs" />
-    <Compile Include="RawFramesDecoding\PixelFormat.cs" />
-    <Compile Include="RawFramesDecoding\AudioConversionParameters.cs" />
-    <Compile Include="RawFramesDecoding\TransformParameters.cs" />
-    <Compile Include="RawFramesDecoding\ScalingQuality.cs" />
-    <Compile Include="RawFramesDecoding\ScalingPolicy.cs" />
-    <Compile Include="RawFramesReceiving\RawFramesSource.cs" />
-    <Compile Include="GUI\RealtimeVideoSource.cs" />
-    <Compile Include="GUI\ScreenInfo.cs" />
-    <Compile Include="GUI\Views\VideoView.xaml.cs">
+    <Compile Include="Model\MainWindowModel.cs" />
+    <Compile Include="Model\DecodedVideoFrame.cs" />
+    <Compile Include="Model\DecodedVideoFrameParameters.cs" />
+    <Compile Include="Model\DecoderException.cs" />
+    <Compile Include="Model\FFmpegDecodedVideoScaler.cs" />
+    <Compile Include="Model\FFmpegVideoDecoder.cs" />
+    <Compile Include="Model\FFmpegVideoPInvoke.cs" />
+    <Compile Include="Model\PixelFormat.cs" />
+    <Compile Include="Model\TransformParameters.cs" />
+    <Compile Include="Model\ScalingQuality.cs" />
+    <Compile Include="Model\ScalingPolicy.cs" />
+    <Compile Include="Model\RawFramesSource.cs" />
+    <Compile Include="Model\RealtimeVideoSource.cs" />
+    <Compile Include="View\VideoView.xaml.cs">
       <DependentUpon>VideoView.xaml</DependentUpon>
     </Compile>
-    <Page Include="GUI\Views\MainWindow.xaml">
+    <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -151,13 +148,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ViewModelLocator.cs" />
-    <Compile Include="GUI\ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="GUI\Views\MainWindow.xaml.cs">
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="GUI\Views\VideoView.xaml">
+    <Page Include="View\VideoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -210,8 +207,8 @@
     <Content Include="x86\swscale-5.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ViewModel\" />
-    <Folder Include="View\" />
+    <Folder Include="GUI\" />
+    <Folder Include="RawFramesReceiving\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

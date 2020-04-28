@@ -55,11 +55,7 @@
                 <TextBox VerticalContentAlignment="Center"
                          Style="{StaticResource TextBoxInError}"
                          Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
-                    <Binding Path="DeviceAddress" UpdateSourceTrigger="PropertyChanged">
-                        <Binding.ValidationRules>
-                            <gui:AddressValidationRule />
-                        </Binding.ValidationRules>
-                    </Binding>
+                    <Binding Path="DeviceAddress" UpdateSourceTrigger="PropertyChanged" />
                 </TextBox>
             </DockPanel>
             <DockPanel Grid.Column="1">

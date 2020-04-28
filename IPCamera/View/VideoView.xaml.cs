@@ -107,8 +107,8 @@ namespace SimpleRtspPlayer.GUI.Views
             _writeableBitmap = new WriteableBitmap(
                 width,
                 height,
-                ScreenInfo.DpiX,
-                ScreenInfo.DpiY,
+                96.0,
+                96.0,
                 PixelFormats.Pbgra32,
                 null);
 

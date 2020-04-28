@@ -5,7 +5,7 @@
              xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:simpleRtspPlayer="clr-namespace:SimpleRtspPlayer"
              d1p1:Ignorable="d"
-             StartupUri="GUI/Views/MainWindow.xaml">
+             StartupUri="/View/MainWindow.xaml">
     <Application.Resources>
         <simpleRtspPlayer:ViewModelLocator x:Key="ViewModelLocator" />
         <!--<ResourceDictionary>
