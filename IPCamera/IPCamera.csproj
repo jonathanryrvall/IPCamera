@@ -132,8 +132,6 @@
     <Compile Include="Model\FFmpegVideoPInvoke.cs" />
     <Compile Include="Model\PixelFormat.cs" />
     <Compile Include="Model\TransformParameters.cs" />
-    <Compile Include="Model\ScalingQuality.cs" />
-    <Compile Include="Model\ScalingPolicy.cs" />
     <Compile Include="Model\RawFramesSource.cs" />
     <Compile Include="Model\RealtimeVideoSource.cs" />
     <Compile Include="View\VideoView.xaml.cs">

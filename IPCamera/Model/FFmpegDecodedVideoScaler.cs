@@ -42,49 +42,12 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
             int scaledWidth = decodedVideoFrameParameters.Width;
             int scaledHeight = decodedVideoFrameParameters.Height;
 
-            if (!transformParameters.RegionOfInterest.IsEmpty)
-            {
-                sourceLeft =
-                    (int) (decodedVideoFrameParameters.Width * transformParameters.RegionOfInterest.Left);
-                sourceTop =
-                    (int) (decodedVideoFrameParameters.Height * transformParameters.RegionOfInterest.Top);
-                sourceWidth =
-                    (int) (decodedVideoFrameParameters.Width * transformParameters.RegionOfInterest.Width);
-                sourceHeight =
-                    (int) (decodedVideoFrameParameters.Height * transformParameters.RegionOfInterest.Height);
-            }
 
-            if (!transformParameters.TargetFrameSize.IsEmpty)
-            {
-                scaledWidth = transformParameters.TargetFrameSize.Width;
-                scaledHeight = transformParameters.TargetFrameSize.Height;
 
-                ScalingPolicy scalingPolicy = transformParameters.ScalePolicy;
-
-                float srcAspectRatio = (float) sourceWidth / sourceHeight;
-                float destAspectRatio = (float) scaledWidth / scaledHeight;
-
-                if (scalingPolicy == ScalingPolicy.Auto)
-                {
-                    float relativeChange = Math.Abs(srcAspectRatio - destAspectRatio) / srcAspectRatio;
-
-                    scalingPolicy = relativeChange > MaxAspectRatioError
-                        ? ScalingPolicy.RespectAspectRatio
-                        : ScalingPolicy.Stretch;
-                }
-
-                if (scalingPolicy == ScalingPolicy.RespectAspectRatio)
-                {
-                    if (destAspectRatio < srcAspectRatio)
-                        scaledHeight = sourceHeight * scaledWidth / sourceWidth;
-                    else
-                        scaledWidth = sourceWidth * scaledHeight / sourceHeight;
-                }
-            }
 
             PixelFormat scaledPixelFormat = transformParameters.TargetFormat;
             FFmpegPixelFormat scaledFFmpegPixelFormat = GetFFmpegPixelFormat(scaledPixelFormat);
-            FFmpegScalingQuality scaleQuality = GetFFmpegScaleQuality(transformParameters.ScaleQuality);
+            FFmpegScalingQuality scaleQuality = transformParameters.ScaleQuality;
 
             int resultCode = FFmpegVideoPInvoke.CreateVideoScaler(sourceLeft, sourceTop, sourceWidth, sourceHeight,
                 decodedVideoFrameParameters.PixelFormat,
@@ -106,19 +69,19 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
             GC.SuppressFinalize(this);
         }
 
-        private static FFmpegScalingQuality GetFFmpegScaleQuality(ScalingQuality scalingQuality)
-        {
-            if (scalingQuality == ScalingQuality.Nearest)
-                return FFmpegScalingQuality.Point;
-            if (scalingQuality == ScalingQuality.Bilinear)
-                return FFmpegScalingQuality.Bilinear;
-            if (scalingQuality == ScalingQuality.FastBilinear)
-                return FFmpegScalingQuality.FastBilinear;
-            if (scalingQuality == ScalingQuality.Bicubic)
-                return FFmpegScalingQuality.Bicubic;
+        //private static FFmpegScalingQuality GetFFmpegScaleQuality(ScalingQuality scalingQuality)
+        //{
+        //    if (scalingQuality == ScalingQuality.Nearest)
+        //        return FFmpegScalingQuality.Point;
+        //    if (scalingQuality == ScalingQuality.Bilinear)
+        //        return FFmpegScalingQuality.Bilinear;
+        //    if (scalingQuality == ScalingQuality.FastBilinear)
+        //        return FFmpegScalingQuality.FastBilinear;
+        //    if (scalingQuality == ScalingQuality.Bicubic)
+        //        return FFmpegScalingQuality.Bicubic;
 
-            throw new ArgumentOutOfRangeException(nameof(scalingQuality));
-        }
+        //    throw new ArgumentOutOfRangeException(nameof(scalingQuality));
+        //}
 
         private static FFmpegPixelFormat GetFFmpegPixelFormat(PixelFormat pixelFormat)
         {

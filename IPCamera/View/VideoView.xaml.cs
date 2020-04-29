@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using SimpleRtspPlayer.RawFramesDecoding;
 using SimpleRtspPlayer.RawFramesDecoding.DecodedFrames;
+using SimpleRtspPlayer.RawFramesDecoding.FFmpeg;
 using PixelFormat = SimpleRtspPlayer.RawFramesDecoding.PixelFormat;
 
 namespace SimpleRtspPlayer.GUI.Views
@@ -22,8 +23,6 @@ namespace SimpleRtspPlayer.GUI.Views
 
         private WriteableBitmap _writeableBitmap;
 
-        private int _width;
-        private int _height;
         private Int32Rect _dirtyRect;
         private TransformParameters _transformParameters;
         private readonly Action<DecodedVideoFrame> _invalidateAction;
@@ -50,54 +49,21 @@ namespace SimpleRtspPlayer.GUI.Views
         {
             InitializeComponent();
             _invalidateAction = Invalidate;
+            ReinitializeBitmap();
         }
 
-        protected override System.Windows.Size MeasureOverride(System.Windows.Size constraint)
+
+        private void ReinitializeBitmap()
         {
-            int newWidth = (int)constraint.Width;
-            int newHeight = (int)constraint.Height;
+            _dirtyRect = new Int32Rect(0, 0, 1280, 720);
 
-            if (_width != newWidth || _height != newHeight)
-            {
-                _resizeCancellationTokenSource.Cancel();
-                _resizeCancellationTokenSource = new CancellationTokenSource();
-
-                _handleSizeChangedTask = _handleSizeChangedTask.ContinueWith(prev =>
-                    HandleSizeChangedAsync(newWidth, newHeight, _resizeCancellationTokenSource.Token));
-            }
-
-            return base.MeasureOverride(constraint);
-        }
-
-        private async Task HandleSizeChangedAsync(int width, int height, CancellationToken token)
-        {
-            try
-            {
-                await Task.Delay(ResizeHandleTimeout, token).ConfigureAwait(false);
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    ReinitializeBitmap(width, height);
-                }, DispatcherPriority.Send, token);
-            }
-            catch (OperationCanceledException)
-            {
-            }
-        }
-
-        private void ReinitializeBitmap(int width, int height)
-        {
-            _width = width;
-            _height = height;
-            _dirtyRect = new Int32Rect(0, 0, width, height);
-
-            _transformParameters = new TransformParameters(RectangleF.Empty,
-                    new System.Drawing.Size(_width, _height),
-                    ScalingPolicy.Stretch, PixelFormat.Bgra32, ScalingQuality.FastBilinear);
+            _transformParameters = new TransformParameters(
+                    new System.Drawing.Size(1280, 720),
+                    PixelFormat.Bgra32, FFmpegScalingQuality.FastBilinear);
 
             _writeableBitmap = new WriteableBitmap(
-                width,
-                height,
+                1280,
+                720,
                 96.0,
                 96.0,
                 PixelFormats.Pbgra32,
@@ -137,9 +103,6 @@ namespace SimpleRtspPlayer.GUI.Views
 
         private void Invalidate(DecodedVideoFrame decodedVideoFrame)
         {
-            if (_width == 0 || _height == 0)
-                return;
-
             _writeableBitmap.Lock();
 
             try

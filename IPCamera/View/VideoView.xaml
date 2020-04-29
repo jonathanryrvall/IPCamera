@@ -9,5 +9,6 @@
     <Image x:Name="VideoImage"
            x:FieldModifier="private"
            SnapsToDevicePixels="True"
+           Stretch="None"
            UseLayoutRounding="True" />
 </UserControl>

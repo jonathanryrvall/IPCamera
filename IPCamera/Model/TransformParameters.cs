@@ -1,27 +1,25 @@
-﻿using System.Drawing;
+﻿using SimpleRtspPlayer.RawFramesDecoding.FFmpeg;
+using System.Drawing;
 
 namespace SimpleRtspPlayer.RawFramesDecoding
 {
     public class TransformParameters
     {
-        public RectangleF RegionOfInterest { get; }
-
+     
         public Size TargetFrameSize { get; }
 
-        public ScalingPolicy ScalePolicy { get; }
-
+     
         public PixelFormat TargetFormat { get; }
 
-        public ScalingQuality ScaleQuality { get; }
+        public FFmpegScalingQuality ScaleQuality { get; }
 
-        public TransformParameters(RectangleF regionOfInterest, Size targetFrameSize, ScalingPolicy scalePolicy,
-            PixelFormat targetFormat, ScalingQuality scaleQuality)
+        public TransformParameters(Size targetFrameSize, 
+            PixelFormat targetFormat, FFmpegScalingQuality scaleQuality)
         {
-            RegionOfInterest = regionOfInterest;
             TargetFrameSize = targetFrameSize;
             TargetFormat = targetFormat;
             ScaleQuality = scaleQuality;
-            ScalePolicy = scalePolicy;
+      
         }
 
     }

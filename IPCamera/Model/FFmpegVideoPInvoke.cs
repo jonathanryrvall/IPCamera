@@ -3,14 +3,14 @@ using System.Runtime.InteropServices;
 
 namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
 {
-    enum FFmpegVideoCodecId
+    public enum FFmpegVideoCodecId
     {
         MJPEG = 7,
         H264 = 27
     }
 
     [Flags]
-    enum FFmpegScalingQuality
+    public enum FFmpegScalingQuality
     {
         FastBilinear = 1,
         Bilinear = 2,
@@ -19,7 +19,7 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
         Area = 0x20,
     }
 
-    enum FFmpegPixelFormat
+    public enum FFmpegPixelFormat
     {
         None = -1,
         BGR24 = 3,
