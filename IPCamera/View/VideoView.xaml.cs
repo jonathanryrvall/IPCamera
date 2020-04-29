@@ -18,10 +18,8 @@ namespace SimpleRtspPlayer.GUI.Views
     /// </summary>
     public partial class VideoView
     {
-        private static readonly System.Windows.Media.Color DefaultFillColor = Colors.Black;
         private static readonly TimeSpan ResizeHandleTimeout = TimeSpan.FromMilliseconds(500);
 
-        private System.Windows.Media.Color _fillColor = DefaultFillColor;
         private WriteableBitmap _writeableBitmap;
 
         private int _width;
@@ -38,10 +36,7 @@ namespace SimpleRtspPlayer.GUI.Views
             typeof(VideoView),
             new FrameworkPropertyMetadata(OnVideoSourceChanged));
 
-        public static readonly DependencyProperty FillColorProperty = DependencyProperty.Register(nameof(FillColor),
-            typeof(System.Windows.Media.Color),
-            typeof(VideoView),
-            new FrameworkPropertyMetadata(DefaultFillColor, OnFillColorPropertyChanged));
+       
 
         public RealtimeVideoSource VideoSource
         {
@@ -49,11 +44,7 @@ namespace SimpleRtspPlayer.GUI.Views
             set => SetValue(VideoSourceProperty, value);
         }
 
-        public System.Windows.Media.Color FillColor
-        {
-            get => (System.Windows.Media.Color)GetValue(FillColorProperty);
-            set => SetValue(FillColorProperty, value);
-        }
+    
 
         public VideoView()
         {
@@ -118,7 +109,6 @@ namespace SimpleRtspPlayer.GUI.Views
 
             try
             {
-                UpdateBackgroundColor(_writeableBitmap.BackBuffer, _writeableBitmap.BackBufferStride);
                 _writeableBitmap.AddDirtyRect(_dirtyRect);
             }
             finally
@@ -164,26 +154,6 @@ namespace SimpleRtspPlayer.GUI.Views
             }
         }
 
-        private static void OnFillColorPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var view = (VideoView)d;
-            view._fillColor = (System.Windows.Media.Color)e.NewValue;
-        }
-
-        private unsafe void UpdateBackgroundColor(IntPtr backBufferPtr, int backBufferStride)
-        {
-            byte* pixels = (byte*)backBufferPtr;
-            int color = _fillColor.A << 24 | _fillColor.R << 16 | _fillColor.G << 8 | _fillColor.B;
-
-            Debug.Assert(pixels != null, nameof(pixels) + " != null");
-
-            for (int i = 0; i < _height; i++)
-            {
-                for (int j = 0; j < _width; j++)
-                    ((int*)pixels)[j] = color;
-
-                pixels += backBufferStride;
-            }
-        }
+    
     }
 }
