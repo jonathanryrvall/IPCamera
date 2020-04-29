@@ -9,12 +9,12 @@ namespace SimpleRtspPlayer.RawFramesDecoding
         public Size TargetFrameSize { get; }
 
      
-        public PixelFormat TargetFormat { get; }
+        public FFmpegPixelFormat TargetFormat { get; }
 
         public FFmpegScalingQuality ScaleQuality { get; }
 
-        public TransformParameters(Size targetFrameSize, 
-            PixelFormat targetFormat, FFmpegScalingQuality scaleQuality)
+        public TransformParameters(Size targetFrameSize,
+            FFmpegPixelFormat targetFormat, FFmpegScalingQuality scaleQuality)
         {
             TargetFrameSize = targetFrameSize;
             TargetFormat = targetFormat;

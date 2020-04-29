@@ -130,7 +130,6 @@
     <Compile Include="Model\FFmpegDecodedVideoScaler.cs" />
     <Compile Include="Model\FFmpegVideoDecoder.cs" />
     <Compile Include="Model\FFmpegVideoPInvoke.cs" />
-    <Compile Include="Model\PixelFormat.cs" />
     <Compile Include="Model\TransformParameters.cs" />
     <Compile Include="Model\RawFramesSource.cs" />
     <Compile Include="Model\RealtimeVideoSource.cs" />

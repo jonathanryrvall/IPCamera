@@ -10,7 +10,7 @@ using System.Windows.Threading;
 using SimpleRtspPlayer.RawFramesDecoding;
 using SimpleRtspPlayer.RawFramesDecoding.DecodedFrames;
 using SimpleRtspPlayer.RawFramesDecoding.FFmpeg;
-using PixelFormat = SimpleRtspPlayer.RawFramesDecoding.PixelFormat;
+
 
 namespace SimpleRtspPlayer.GUI.Views
 {
@@ -59,7 +59,7 @@ namespace SimpleRtspPlayer.GUI.Views
 
             _transformParameters = new TransformParameters(
                     new System.Drawing.Size(1280, 720),
-                    PixelFormat.Bgra32, FFmpegScalingQuality.FastBilinear);
+                    FFmpegPixelFormat.BGRA, FFmpegScalingQuality.FastBilinear);
 
             _writeableBitmap = new WriteableBitmap(
                 1280,
