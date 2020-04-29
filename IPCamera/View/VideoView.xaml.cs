@@ -19,23 +19,18 @@ namespace SimpleRtspPlayer.GUI.Views
     /// </summary>
     public partial class VideoView
     {
-        private static readonly TimeSpan ResizeHandleTimeout = TimeSpan.FromMilliseconds(500);
-
         private WriteableBitmap _writeableBitmap;
 
         private Int32Rect _dirtyRect;
         private TransformParameters _transformParameters;
-        private readonly Action<DecodedVideoFrame> _invalidateAction;
 
-        private Task _handleSizeChangedTask = Task.CompletedTask;
-        private CancellationTokenSource _resizeCancellationTokenSource = new CancellationTokenSource();
 
         public static readonly DependencyProperty VideoSourceProperty = DependencyProperty.Register(nameof(VideoSource),
             typeof(RealtimeVideoSource),
             typeof(VideoView),
             new FrameworkPropertyMetadata(OnVideoSourceChanged));
 
-       
+
 
         public RealtimeVideoSource VideoSource
         {
@@ -43,12 +38,11 @@ namespace SimpleRtspPlayer.GUI.Views
             set => SetValue(VideoSourceProperty, value);
         }
 
-    
+
 
         public VideoView()
         {
             InitializeComponent();
-            _invalidateAction = Invalidate;
             ReinitializeBitmap();
         }
 
@@ -98,7 +92,11 @@ namespace SimpleRtspPlayer.GUI.Views
 
         private void OnFrameReceived(object sender, DecodedVideoFrame decodedFrame)
         {
-            Application.Current.Dispatcher.Invoke(_invalidateAction, DispatcherPriority.Send, decodedFrame);
+            App.Current.Dispatcher.Invoke(() =>
+            {
+
+                Invalidate(decodedFrame);
+            });
         }
 
         private void Invalidate(DecodedVideoFrame decodedVideoFrame)
@@ -117,6 +115,6 @@ namespace SimpleRtspPlayer.GUI.Views
             }
         }
 
-    
+
     }
 }

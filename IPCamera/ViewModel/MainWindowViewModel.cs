@@ -39,7 +39,7 @@ namespace SimpleRtspPlayer.GUI.ViewModels
         {
             
             StartClickCommand = new RelayCommand(OnStartButtonClick);
-            ClosingCommand = new RelayCommand<CancelEventArgs>(OnClosing);
+   
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -79,11 +79,7 @@ namespace SimpleRtspPlayer.GUI.ViewModels
             Application.Current.Dispatcher.Invoke(() => Status = s);
         }
 
-        private void OnClosing(CancelEventArgs args)
-        {
-           // _mainWindowModel.Stop();
-        }
-
+        
 
 
 
