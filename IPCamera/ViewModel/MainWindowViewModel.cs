@@ -93,13 +93,12 @@ namespace SimpleRtspPlayer.GUI.ViewModels
 
 
 
-        private readonly RealtimeVideoSource _realtimeVideoSource = new RealtimeVideoSource();
-
+      
         private RawFramesSource _rawFramesSource;
 
         public event EventHandler<string> StatusChanged;
 
-        public RealtimeVideoSource VideoSource => _realtimeVideoSource;
+        public RealtimeVideoSource VideoSource { get; set; } = new RealtimeVideoSource();
 
         public void Start(ConnectionParameters connectionParameters)
         {
@@ -109,7 +108,7 @@ namespace SimpleRtspPlayer.GUI.ViewModels
             _rawFramesSource = new RawFramesSource(connectionParameters);
             _rawFramesSource.ConnectionStatusChanged += ConnectionStatusChanged;
 
-            _realtimeVideoSource.SetRawFramesSource(_rawFramesSource);
+            VideoSource.SetRawFramesSource(_rawFramesSource);
 
             _rawFramesSource.Start();
         }
@@ -120,7 +119,7 @@ namespace SimpleRtspPlayer.GUI.ViewModels
                 return;
 
             _rawFramesSource.Stop();
-            _realtimeVideoSource.SetRawFramesSource(null);
+            VideoSource.SetRawFramesSource(null);
             _rawFramesSource = null;
         }
 

@@ -52,7 +52,7 @@ namespace SimpleRtspPlayer.GUI.Views
             _dirtyRect = new Int32Rect(0, 0, 1280, 720);
 
             _transformParameters = new TransformParameters(
-                    new System.Drawing.Size(1280, 720),
+                  
                     FFmpegPixelFormat.BGRA, FFmpegScalingQuality.FastBilinear);
 
             _writeableBitmap = new WriteableBitmap(
