@@ -125,8 +125,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\DecodedVideoFrame.cs" />
-    <Compile Include="Model\DecodedVideoFrameParameters.cs" />
-    <Compile Include="Model\FFmpegVideoDecoder.cs" />
     <Compile Include="Model\FFmpegVideoPInvoke.cs" />
     <Compile Include="Model\RawFramesSource.cs" />
     <Compile Include="Model\RealtimeVideoSource.cs" />
