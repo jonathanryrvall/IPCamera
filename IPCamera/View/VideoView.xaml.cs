@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using RtspClientSharp;
 using SimpleRtspPlayer.RawFramesDecoding;
 using SimpleRtspPlayer.RawFramesDecoding.DecodedFrames;
 using SimpleRtspPlayer.RawFramesDecoding.FFmpeg;
-
+using SimpleRtspPlayer.RawFramesReceiving;
 
 namespace SimpleRtspPlayer.GUI.Views
 {
@@ -19,33 +21,72 @@ namespace SimpleRtspPlayer.GUI.Views
     /// </summary>
     public partial class VideoView
     {
+        public string DeviceAddress { get; set; } = "rtsp://admin:admins@192.168.1.101/user=admin_password=_channel=1_stream=0.sdp";
+
+        public string Login { get; set; } = "admin";
+        public string Password { get; set; } = "123456";
+
+
         private WriteableBitmap _writeableBitmap;
 
         private Int32Rect _dirtyRect;
-    
-
-        public static readonly DependencyProperty VideoSourceProperty = DependencyProperty.Register(nameof(VideoSource),
-            typeof(RealtimeVideoSource),
-            typeof(VideoView),
-            new FrameworkPropertyMetadata(OnVideoSourceChanged));
 
 
 
-        public RealtimeVideoSource VideoSource
-        {
-            get => (RealtimeVideoSource)GetValue(VideoSourceProperty);
-            set => SetValue(VideoSourceProperty, value);
-        }
-
-
+        
 
         public VideoView()
         {
             InitializeComponent();
+           
             ReinitializeBitmap();
+
+            if (!Uri.TryCreate(DeviceAddress, UriKind.Absolute, out Uri deviceUri))
+            {
+                MessageBox.Show("Invalid device address", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var credential = new NetworkCredential(Login, Password);
+
+            ConnectionParameters connectionParameters;
+            if (string.IsNullOrEmpty(deviceUri.UserInfo))
+            {
+                connectionParameters = new ConnectionParameters(deviceUri);
+            }
+            else
+            {
+                connectionParameters = new ConnectionParameters(deviceUri, credential);
+
+            }
+       
+            connectionParameters.RtpTransport = RtpTransportProtocol.UDP;
+            connectionParameters.CancelTimeout = TimeSpan.FromSeconds(1);
+
+            Start(connectionParameters);
+
         }
 
 
+        private RawFramesSource _rawFramesSource;
+
+        public RealtimeVideoSource VideoSource  = new RealtimeVideoSource();
+
+        public void Start(ConnectionParameters connectionParameters)
+        {
+            if (_rawFramesSource != null)
+                return;
+
+            _rawFramesSource = new RawFramesSource(connectionParameters);
+          
+            VideoSource.SetRawFramesSource(_rawFramesSource);
+            VideoSource.FrameReceived += OnFrameReceived;
+            _rawFramesSource.Start();
+
+           
+        }
+
+    
         private void ReinitializeBitmap()
         {
             _dirtyRect = new Int32Rect(0, 0, 1280, 720);
@@ -74,17 +115,6 @@ namespace SimpleRtspPlayer.GUI.Views
             }
 
             VideoImage.Source = _writeableBitmap;
-        }
-
-        private static void OnVideoSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var view = (VideoView)d;
-
-            if (e.OldValue is RealtimeVideoSource oldVideoSource)
-                oldVideoSource.FrameReceived -= view.OnFrameReceived;
-
-            if (e.NewValue is RealtimeVideoSource newVideoSource)
-                newVideoSource.FrameReceived += view.OnFrameReceived;
         }
 
         private void OnFrameReceived(object sender, DecodedVideoFrame decodedFrame)
