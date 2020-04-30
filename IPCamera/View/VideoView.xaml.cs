@@ -10,7 +10,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using RtspClientSharp;
 using SimpleRtspPlayer.RawFramesDecoding;
-using SimpleRtspPlayer.RawFramesDecoding.DecodedFrames;
 using SimpleRtspPlayer.RawFramesDecoding.FFmpeg;
 using SimpleRtspPlayer.RawFramesReceiving;
 
@@ -31,63 +30,18 @@ namespace SimpleRtspPlayer.GUI.Views
 
         private Int32Rect _dirtyRect;
 
+        private RawFramesSource _rawFramesSource;
 
 
-        
+
 
         public VideoView()
         {
             InitializeComponent();
-           
-            ReinitializeBitmap();
 
-            if (!Uri.TryCreate(DeviceAddress, UriKind.Absolute, out Uri deviceUri))
-            {
-                MessageBox.Show("Invalid device address", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            var credential = new NetworkCredential(Login, Password);
-
-            ConnectionParameters connectionParameters;
-            if (string.IsNullOrEmpty(deviceUri.UserInfo))
-            {
-                connectionParameters = new ConnectionParameters(deviceUri);
-            }
-            else
-            {
-                connectionParameters = new ConnectionParameters(deviceUri, credential);
-
-            }
-       
-            connectionParameters.RtpTransport = RtpTransportProtocol.UDP;
-            connectionParameters.CancelTimeout = TimeSpan.FromSeconds(1);
-
-            Start(connectionParameters);
-
-        }
-
-
-        private RawFramesSource _rawFramesSource;
-
-    
-        public void Start(ConnectionParameters connectionParameters)
-        {
-          
-            _rawFramesSource = new RawFramesSource(connectionParameters);
-
-            _rawFramesSource.DecodedFrameReceived += OnFrameReceived;
-            _rawFramesSource.Start();
-
-           
-        }
-
-    
-        private void ReinitializeBitmap()
-        {
             _dirtyRect = new Int32Rect(0, 0, 1280, 720);
 
-         
+
 
             _writeableBitmap = new WriteableBitmap(
                 1280,
@@ -111,32 +65,63 @@ namespace SimpleRtspPlayer.GUI.Views
             }
 
             VideoImage.Source = _writeableBitmap;
+
+            if (!Uri.TryCreate(DeviceAddress, UriKind.Absolute, out Uri deviceUri))
+            {
+                MessageBox.Show("Invalid device address", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var credential = new NetworkCredential(Login, Password);
+
+            ConnectionParameters connectionParameters;
+            if (string.IsNullOrEmpty(deviceUri.UserInfo))
+            {
+                connectionParameters = new ConnectionParameters(deviceUri);
+            }
+            else
+            {
+                connectionParameters = new ConnectionParameters(deviceUri, credential);
+
+            }
+       
+            connectionParameters.RtpTransport = RtpTransportProtocol.UDP;
+            connectionParameters.CancelTimeout = TimeSpan.FromSeconds(1);
+
+            _rawFramesSource = new RawFramesSource(connectionParameters);
+
+            _rawFramesSource.DecodedFrameReceived += OnFrameReceived;
+            _rawFramesSource.Start();
+
         }
 
-        private void OnFrameReceived(object sender, DecodedVideoFrame decodedFrame)
+
+     
+    
+    
+     
+
+        private void OnFrameReceived(object sender, EventArgs e)
         {
             App.Current.Dispatcher.Invoke(() =>
             {
 
-                Invalidate(decodedFrame);
+                _writeableBitmap.Lock();
+
+                try
+                {
+                    _rawFramesSource.TransformTo(_writeableBitmap);
+
+                    _writeableBitmap.AddDirtyRect(_dirtyRect);
+                }
+                finally
+                {
+                    _writeableBitmap.Unlock();
+                }
             });
         }
 
-        private void Invalidate(DecodedVideoFrame decodedVideoFrame)
-        {
-            _writeableBitmap.Lock();
-
-            try
-            {
-                decodedVideoFrame.TransformTo(_writeableBitmap.BackBuffer, _writeableBitmap.BackBufferStride);
-
-                _writeableBitmap.AddDirtyRect(_dirtyRect);
-            }
-            finally
-            {
-                _writeableBitmap.Unlock();
-            }
-        }
+      
 
 
     }

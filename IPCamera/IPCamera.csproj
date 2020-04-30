@@ -124,7 +124,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\DecodedVideoFrame.cs" />
     <Compile Include="Model\FFmpegVideoPInvoke.cs" />
     <Compile Include="Model\RawFramesSource.cs" />
     <Compile Include="View\VideoView.xaml.cs">

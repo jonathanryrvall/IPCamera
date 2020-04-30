@@ -3,40 +3,49 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 using RtspClientSharp;
 using RtspClientSharp.RawFrames;
 using RtspClientSharp.RawFrames.Video;
 using RtspClientSharp.Rtsp;
-using SimpleRtspPlayer.RawFramesDecoding.DecodedFrames;
+
 using SimpleRtspPlayer.RawFramesDecoding.FFmpeg;
 
 namespace SimpleRtspPlayer.RawFramesReceiving
 {
-    public class RawFramesSource 
+    public class RawFramesSource
     {
+        public IntPtr scalerHandle;
+        private IntPtr decoderHandle;
+        public int Width;
+        public int Height;
+        public FFmpegPixelFormat PixelFormat;
+        private byte[] _extraData = new byte[0];
+        private bool _disposed;
         private static readonly TimeSpan RetryDelay = TimeSpan.FromSeconds(5);
-        private readonly ConnectionParameters _connectionParameters;
-        private Task _workTask = Task.CompletedTask;
-        private CancellationTokenSource _cancellationTokenSource;
+        private readonly ConnectionParameters connectionParameters;
+        private Task workTask = Task.CompletedTask;
+        private CancellationTokenSource cancellationTokenSource;
 
-        public event EventHandler<DecodedVideoFrame> DecodedFrameReceived;
 
-        public EventHandler<RawFrame> FrameReceived { get; set; }
-        public EventHandler<string> ConnectionStatusChanged { get; set; }
+
+        public event EventHandler DecodedFrameReceived;
+        public event EventHandler<RawFrame> FrameReceived;
+        public event EventHandler<string> ConnectionStatusChanged;
+
 
         public RawFramesSource(ConnectionParameters connectionParameters)
         {
-            _connectionParameters =
-                connectionParameters ?? throw new ArgumentNullException(nameof(connectionParameters));
+            this.connectionParameters = connectionParameters;
         }
 
         public void Start()
         {
-            _cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource = new CancellationTokenSource();
 
-            CancellationToken token = _cancellationTokenSource.Token;
+            CancellationToken token = cancellationTokenSource.Token;
 
-            _workTask = _workTask.ContinueWith(async p =>
+            workTask = workTask.ContinueWith(async p =>
             {
                 await ReceiveAsync(token);
             }, token);
@@ -44,14 +53,17 @@ namespace SimpleRtspPlayer.RawFramesReceiving
 
         public void Stop()
         {
-            _cancellationTokenSource.Cancel();
+            cancellationTokenSource.Cancel();
         }
 
+        /// <summary>
+        /// Éndless recieve loop
+        /// </summary>
         private async Task ReceiveAsync(CancellationToken token)
         {
             try
             {
-                using (var rtspClient = new RtspClient(_connectionParameters))
+                using (var rtspClient = new RtspClient(connectionParameters))
                 {
                     rtspClient.FrameReceived += RtspClientOnFrameReceived;
 
@@ -97,10 +109,13 @@ namespace SimpleRtspPlayer.RawFramesReceiving
 
         private void RtspClientOnFrameReceived(object sender, RawFrame rawFrame)
         {
-            OnFrameReceived(sender, rawFrame);
+            ProcessRawFrame(rawFrame);
             FrameReceived?.Invoke(this, rawFrame);
         }
 
+        /// <summary>
+        /// Connection status changed
+        /// </summary>
         private void OnStatusChanged(string status)
         {
             ConnectionStatusChanged?.Invoke(this, status);
@@ -108,57 +123,27 @@ namespace SimpleRtspPlayer.RawFramesReceiving
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        public IntPtr videoscaler;
-        private IntPtr _decoderHandle;
-        public int Width;
-        public int Height;
-        public FFmpegPixelFormat PixelFormat;
-        private byte[] _extraData = new byte[0];
-        private bool _disposed;
-
-        public void SetRawFramesSource(RawFramesSource rawFramesSource)
-        {
-            rawFramesSource.FrameReceived += OnFrameReceived;
-        }
-
-
-
-
-        private void OnFrameReceived(object sender, RawFrame rawFrame)
+        private void ProcessRawFrame(RawFrame rawFrame)
         {
             if (!(rawFrame is RawVideoFrame rawVideoFrame))
                 return;
 
 
             FFmpegVideoCodecId codecId = DetectCodecId(rawVideoFrame);
-            if (_decoderHandle == IntPtr.Zero)
+            if (decoderHandle == IntPtr.Zero)
             {
-                FFmpegVideoPInvoke.CreateVideoDecoder(codecId, out _decoderHandle);
+                FFmpegVideoPInvoke.CreateVideoDecoder(codecId, out decoderHandle);
 
             }
 
 
-            DecodedVideoFrame decodedFrame = TryDecode(rawVideoFrame);
+            if (TryDecode(rawVideoFrame))
+            {
+                DecodedFrameReceived?.Invoke(this, null);
+            }
 
-            if (decodedFrame != null)
-                DecodedFrameReceived?.Invoke(this, decodedFrame);
+
+
         }
 
 
@@ -180,7 +165,7 @@ namespace SimpleRtspPlayer.RawFramesReceiving
 
 
 
-        public unsafe DecodedVideoFrame TryDecode(RawVideoFrame rawVideoFrame)
+        public unsafe bool TryDecode(RawVideoFrame rawVideoFrame)
         {
             fixed (byte* rawBufferPtr = &rawVideoFrame.FrameSegment.Array[rawVideoFrame.FrameSegment.Offset])
             {
@@ -199,7 +184,7 @@ namespace SimpleRtspPlayer.RawFramesReceiving
 
                         fixed (byte* initDataPtr = &_extraData[0])
                         {
-                            resultCode = FFmpegVideoPInvoke.SetVideoDecoderExtraData(_decoderHandle,
+                            resultCode = FFmpegVideoPInvoke.SetVideoDecoderExtraData(decoderHandle,
                                 (IntPtr)initDataPtr, _extraData.Length);
 
 
@@ -207,12 +192,12 @@ namespace SimpleRtspPlayer.RawFramesReceiving
                     }
                 }
 
-                resultCode = FFmpegVideoPInvoke.DecodeFrame(_decoderHandle, (IntPtr)rawBufferPtr,
+                resultCode = FFmpegVideoPInvoke.DecodeFrame(decoderHandle, (IntPtr)rawBufferPtr,
                     rawVideoFrame.FrameSegment.Count,
                     out int width, out int height, out FFmpegPixelFormat pixelFormat);
 
                 if (resultCode != 0)
-                    return null;
+                    return false;
 
                 Width = width;
                 Height = height;
@@ -220,7 +205,7 @@ namespace SimpleRtspPlayer.RawFramesReceiving
 
 
 
-                return new DecodedVideoFrame(TransformTo);
+                return true;
             }
         }
 
@@ -230,24 +215,26 @@ namespace SimpleRtspPlayer.RawFramesReceiving
                 return;
 
             _disposed = true;
-            FFmpegVideoPInvoke.RemoveVideoDecoder(_decoderHandle);
-            FFmpegVideoPInvoke.RemoveVideoScaler(videoscaler);
+            FFmpegVideoPInvoke.RemoveVideoDecoder(decoderHandle);
+            FFmpegVideoPInvoke.RemoveVideoScaler(scalerHandle);
 
             GC.SuppressFinalize(this);
         }
 
 
-
-        private void TransformTo(IntPtr buffer, int bufferStride)
+        /// <summary>
+        /// Apply the new changes to a writeable bitmap
+        /// </summary>
+        public void TransformTo(WriteableBitmap bitmap)
         {
-            if (videoscaler == IntPtr.Zero)
+            if (scalerHandle == IntPtr.Zero)
             {
                 FFmpegVideoPInvoke.CreateVideoScaler(0, 0, Width, Height,
                PixelFormat,
-               Width, Height, FFmpegPixelFormat.BGRA, FFmpegScalingQuality.FastBilinear, out videoscaler);
+               Width, Height, FFmpegPixelFormat.BGRA, FFmpegScalingQuality.FastBilinear, out scalerHandle);
             }
 
-            FFmpegVideoPInvoke.ScaleDecodedVideoFrame(_decoderHandle, videoscaler, buffer, bufferStride);
+            FFmpegVideoPInvoke.ScaleDecodedVideoFrame(decoderHandle, scalerHandle, bitmap.BackBuffer, bitmap.BackBufferStride);
         }
 
 
