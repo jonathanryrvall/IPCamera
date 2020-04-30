@@ -127,8 +127,6 @@
     <Compile Include="Model\DecodedVideoFrame.cs" />
     <Compile Include="Model\FFmpegVideoPInvoke.cs" />
     <Compile Include="Model\RawFramesSource.cs" />
-    <Compile Include="Model\RealtimeVideoSource.cs" />
-    <Compile Include="Model\VIDSRC.cs" />
     <Compile Include="View\VideoView.xaml.cs">
       <DependentUpon>VideoView.xaml</DependentUpon>
     </Compile>

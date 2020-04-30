@@ -70,17 +70,13 @@ namespace SimpleRtspPlayer.GUI.Views
 
         private RawFramesSource _rawFramesSource;
 
-        public RealtimeVideoSource VideoSource  = new RealtimeVideoSource();
-
+    
         public void Start(ConnectionParameters connectionParameters)
         {
-            if (_rawFramesSource != null)
-                return;
-
-            _rawFramesSource = new RawFramesSource(connectionParameters);
           
-            VideoSource.SetRawFramesSource(_rawFramesSource);
-            VideoSource.FrameReceived += OnFrameReceived;
+            _rawFramesSource = new RawFramesSource(connectionParameters);
+
+            _rawFramesSource.DecodedFrameReceived += OnFrameReceived;
             _rawFramesSource.Start();
 
            
