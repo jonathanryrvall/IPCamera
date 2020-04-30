@@ -15,8 +15,7 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
         private DecodedVideoFrameParameters _currentFrameParameters =
             new DecodedVideoFrameParameters(0, 0, FFmpegPixelFormat.None);
 
-        
-        FFmpegDecodedVideoScaler videoScaler;
+   
 
         private byte[] _extraData = new byte[0];
         private bool _disposed;
@@ -97,7 +96,8 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
 
             _disposed = true;
             FFmpegVideoPInvoke.RemoveVideoDecoder(_decoderHandle);
-         
+            FFmpegVideoPInvoke.RemoveVideoScaler(videoscaler);
+
             GC.SuppressFinalize(this);
         }
 
@@ -105,15 +105,36 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
 
         private void TransformTo(IntPtr buffer, int bufferStride)
         {
-            if (videoScaler == null)
+            if (videoscaler == IntPtr.Zero)
             {
-                videoScaler = FFmpegDecodedVideoScaler.Create(_currentFrameParameters);
+                videoscaler = CreateScaler(_currentFrameParameters);
             }
 
-            int resultCode = FFmpegVideoPInvoke.ScaleDecodedVideoFrame(_decoderHandle, videoScaler.Handle, buffer, bufferStride);
+            int resultCode = FFmpegVideoPInvoke.ScaleDecodedVideoFrame(_decoderHandle, videoscaler, buffer, bufferStride);
+     }
 
-            if (resultCode != 0)
-                throw new Exception($"An error occurred while converting decoding video frame, {_videoCodecId} codec, code: {resultCode}");
+
+
+
+
+        public IntPtr videoscaler;
+
+     
+
+       
+
+        /// <exception cref="DecoderException"></exception>
+        public  IntPtr CreateScaler(DecodedVideoFrameParameters decodedVideoFrameParameters)
+        {
+            int width = decodedVideoFrameParameters.Width;
+            int height = decodedVideoFrameParameters.Height;
+            IntPtr scaler;
+
+            FFmpegVideoPInvoke.CreateVideoScaler(0, 0, width, height,
+                decodedVideoFrameParameters.PixelFormat,
+                width, height, FFmpegPixelFormat.BGRA, FFmpegScalingQuality.FastBilinear, out scaler);
+
+            return scaler;
         }
     }
 }
