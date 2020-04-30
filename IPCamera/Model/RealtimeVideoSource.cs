@@ -8,43 +8,20 @@ using SimpleRtspPlayer.RawFramesReceiving;
 
 namespace SimpleRtspPlayer.GUI
 {
-    public class RealtimeVideoSource : IDisposable
+    public class RealtimeVideoSource
     {
-        private RawFramesSource _rawFramesSource;
+        FFmpegVideoDecoder decoder;
 
-        private readonly Dictionary<FFmpegVideoCodecId, FFmpegVideoDecoder> _videoDecodersMap =
-            new Dictionary<FFmpegVideoCodecId, FFmpegVideoDecoder>();
 
         public event EventHandler<DecodedVideoFrame> FrameReceived;
 
         public void SetRawFramesSource(RawFramesSource rawFramesSource)
         {
-            if (_rawFramesSource != null)
-            {
-                _rawFramesSource.FrameReceived -= OnFrameReceived;
-                DropAllVideoDecoders();
-            }
-
-            _rawFramesSource = rawFramesSource;
-
-            if (rawFramesSource == null)
-                return;
-
-            rawFramesSource.FrameReceived += OnFrameReceived;
+             rawFramesSource.FrameReceived += OnFrameReceived;
         }
 
-        public void Dispose()
-        {
-            DropAllVideoDecoders();
-        }
-
-        private void DropAllVideoDecoders()
-        {
-            foreach (FFmpegVideoDecoder decoder in _videoDecodersMap.Values)
-                decoder.Dispose();
-
-            _videoDecodersMap.Clear();
-        }
+        
+       
 
         private void OnFrameReceived(object sender, RawFrame rawFrame)
         {
@@ -62,11 +39,12 @@ namespace SimpleRtspPlayer.GUI
         private FFmpegVideoDecoder GetDecoderForFrame(RawVideoFrame videoFrame)
         {
             FFmpegVideoCodecId codecId = DetectCodecId(videoFrame);
-            if (!_videoDecodersMap.TryGetValue(codecId, out FFmpegVideoDecoder decoder))
+            if (decoder == null)
             {
                 decoder = FFmpegVideoDecoder.CreateDecoder(codecId);
-                _videoDecodersMap.Add(codecId, decoder);
             }
+         
+
 
             return decoder;
         }

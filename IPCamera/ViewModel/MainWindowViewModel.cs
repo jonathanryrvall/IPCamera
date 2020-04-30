@@ -15,8 +15,7 @@ namespace SimpleRtspPlayer.GUI.ViewModels
 
         public MainWindowViewModel()
         {
-            
-         //   StartClickCommand = new RelayCommand(OnStartButtonClick);
+   
    
         }
 

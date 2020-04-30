@@ -15,8 +15,7 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
         private DecodedVideoFrameParameters _currentFrameParameters =
             new DecodedVideoFrameParameters(0, 0, FFmpegPixelFormat.None);
 
-        //private readonly Dictionary<TransformParameters, FFmpegDecodedVideoScaler> _scalersMap =
-        //    new Dictionary<TransformParameters, FFmpegDecodedVideoScaler>();
+        
         FFmpegDecodedVideoScaler videoScaler;
 
         private byte[] _extraData = new byte[0];
@@ -38,7 +37,7 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
             int resultCode = FFmpegVideoPInvoke.CreateVideoDecoder(videoCodecId, out IntPtr decoderPtr);
 
             if (resultCode != 0)
-                throw new DecoderException(
+                throw new Exception(
                     $"An error occurred while creating video decoder for {videoCodecId} codec, code: {resultCode}");
 
             return new FFmpegVideoDecoder(videoCodecId, decoderPtr);
@@ -67,7 +66,7 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
                                 (IntPtr)initDataPtr, _extraData.Length);
 
                             if (resultCode != 0)
-                                throw new DecoderException(
+                                throw new Exception(
                                     $"An error occurred while setting video extra data, {_videoCodecId} codec, code: {resultCode}");
                         }
                     }
@@ -84,7 +83,7 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
                     _currentFrameParameters.PixelFormat != pixelFormat)
                 {
                     _currentFrameParameters = new DecodedVideoFrameParameters(width, height, pixelFormat);
-                    DropAllVideoScalers();
+           
                 }
 
                 return new DecodedVideoFrame(TransformTo);
@@ -98,17 +97,11 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
 
             _disposed = true;
             FFmpegVideoPInvoke.RemoveVideoDecoder(_decoderHandle);
-            DropAllVideoScalers();
+         
             GC.SuppressFinalize(this);
         }
 
-        private void DropAllVideoScalers()
-        {
-            //foreach (var scaler in _scalersMap.Values)
-            //    scaler.Dispose();
-
-            //_scalersMap.Clear();
-        }
+   
 
         private void TransformTo(IntPtr buffer, int bufferStride)
         {
@@ -120,7 +113,7 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
             int resultCode = FFmpegVideoPInvoke.ScaleDecodedVideoFrame(_decoderHandle, videoScaler.Handle, buffer, bufferStride);
 
             if (resultCode != 0)
-                throw new DecoderException($"An error occurred while converting decoding video frame, {_videoCodecId} codec, code: {resultCode}");
+                throw new Exception($"An error occurred while converting decoding video frame, {_videoCodecId} codec, code: {resultCode}");
         }
     }
 }

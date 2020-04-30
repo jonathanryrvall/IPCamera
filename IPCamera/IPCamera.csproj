@@ -126,7 +126,6 @@
     </ApplicationDefinition>
     <Compile Include="Model\DecodedVideoFrame.cs" />
     <Compile Include="Model\DecodedVideoFrameParameters.cs" />
-    <Compile Include="Model\DecoderException.cs" />
     <Compile Include="Model\FFmpegDecodedVideoScaler.cs" />
     <Compile Include="Model\FFmpegVideoDecoder.cs" />
     <Compile Include="Model\FFmpegVideoPInvoke.cs" />
