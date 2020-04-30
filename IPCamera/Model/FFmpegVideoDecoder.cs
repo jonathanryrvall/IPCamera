@@ -15,8 +15,9 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
         private DecodedVideoFrameParameters _currentFrameParameters =
             new DecodedVideoFrameParameters(0, 0, FFmpegPixelFormat.None);
 
-        private readonly Dictionary<TransformParameters, FFmpegDecodedVideoScaler> _scalersMap =
-            new Dictionary<TransformParameters, FFmpegDecodedVideoScaler>();
+        //private readonly Dictionary<TransformParameters, FFmpegDecodedVideoScaler> _scalersMap =
+        //    new Dictionary<TransformParameters, FFmpegDecodedVideoScaler>();
+        FFmpegDecodedVideoScaler videoScaler;
 
         private byte[] _extraData = new byte[0];
         private bool _disposed;
@@ -103,18 +104,17 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
 
         private void DropAllVideoScalers()
         {
-            foreach (var scaler in _scalersMap.Values)
-                scaler.Dispose();
+            //foreach (var scaler in _scalersMap.Values)
+            //    scaler.Dispose();
 
-            _scalersMap.Clear();
+            //_scalersMap.Clear();
         }
 
-        private void TransformTo(IntPtr buffer, int bufferStride, TransformParameters parameters)
+        private void TransformTo(IntPtr buffer, int bufferStride)
         {
-            if (!_scalersMap.TryGetValue(parameters, out FFmpegDecodedVideoScaler videoScaler))
+            if (videoScaler == null)
             {
-                videoScaler = FFmpegDecodedVideoScaler.Create(_currentFrameParameters, parameters);
-                _scalersMap.Add(parameters, videoScaler);
+                videoScaler = FFmpegDecodedVideoScaler.Create(_currentFrameParameters);
             }
 
             int resultCode = FFmpegVideoPInvoke.ScaleDecodedVideoFrame(_decoderHandle, videoScaler.Handle, buffer, bufferStride);

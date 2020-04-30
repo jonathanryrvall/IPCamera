@@ -20,8 +20,7 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
         }
 
         /// <exception cref="DecoderException"></exception>
-        public static FFmpegDecodedVideoScaler Create(DecodedVideoFrameParameters decodedVideoFrameParameters,
-            TransformParameters transformParameters)
+        public static FFmpegDecodedVideoScaler Create(DecodedVideoFrameParameters decodedVideoFrameParameters)
         {
          
 
@@ -35,8 +34,8 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
 
 
 
-            FFmpegPixelFormat scaledFFmpegPixelFormat = transformParameters.TargetFormat ;
-            FFmpegScalingQuality scaleQuality = transformParameters.ScaleQuality;
+            FFmpegPixelFormat scaledFFmpegPixelFormat = FFmpegPixelFormat.BGRA;
+            FFmpegScalingQuality scaleQuality = FFmpegScalingQuality.FastBilinear;
 
             int resultCode = FFmpegVideoPInvoke.CreateVideoScaler(sourceLeft, sourceTop, sourceWidth, sourceHeight,
                 decodedVideoFrameParameters.PixelFormat,
@@ -45,7 +44,7 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
             if (resultCode != 0)
                 throw new DecoderException(@"An error occurred while creating scaler, code: {resultCode}");
 
-            return new FFmpegDecodedVideoScaler(handle, scaledWidth, scaledHeight, transformParameters.TargetFormat);
+            return new FFmpegDecodedVideoScaler(handle, scaledWidth, scaledHeight, scaledFFmpegPixelFormat);
         }
 
         public void Dispose()

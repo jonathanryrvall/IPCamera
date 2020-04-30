@@ -22,8 +22,7 @@ namespace SimpleRtspPlayer.GUI.Views
         private WriteableBitmap _writeableBitmap;
 
         private Int32Rect _dirtyRect;
-        private TransformParameters _transformParameters;
-
+    
 
         public static readonly DependencyProperty VideoSourceProperty = DependencyProperty.Register(nameof(VideoSource),
             typeof(RealtimeVideoSource),
@@ -51,9 +50,7 @@ namespace SimpleRtspPlayer.GUI.Views
         {
             _dirtyRect = new Int32Rect(0, 0, 1280, 720);
 
-            _transformParameters = new TransformParameters(
-                  
-                    FFmpegPixelFormat.BGRA, FFmpegScalingQuality.FastBilinear);
+         
 
             _writeableBitmap = new WriteableBitmap(
                 1280,
@@ -105,7 +102,7 @@ namespace SimpleRtspPlayer.GUI.Views
 
             try
             {
-                decodedVideoFrame.TransformTo(_writeableBitmap.BackBuffer, _writeableBitmap.BackBufferStride, _transformParameters);
+                decodedVideoFrame.TransformTo(_writeableBitmap.BackBuffer, _writeableBitmap.BackBufferStride);
 
                 _writeableBitmap.AddDirtyRect(_dirtyRect);
             }
