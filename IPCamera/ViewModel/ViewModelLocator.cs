@@ -1,7 +1,7 @@
 ﻿using System;
-using SimpleRtspPlayer.GUI.ViewModels;
 
-namespace SimpleRtspPlayer
+
+namespace IPCamera.ViewModel
 {
     class ViewModelLocator
     {

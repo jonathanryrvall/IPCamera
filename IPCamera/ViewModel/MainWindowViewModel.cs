@@ -3,13 +3,14 @@ using System.ComponentModel;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using RtspClientSharp;
-using SimpleRtspPlayer.RawFramesReceiving;
 
-namespace SimpleRtspPlayer.GUI.ViewModels
+
+namespace IPCamera.ViewModel
 {
-    class MainWindowViewModel
+    public class MainWindowViewModel : ViewModelBase
     {
       
 

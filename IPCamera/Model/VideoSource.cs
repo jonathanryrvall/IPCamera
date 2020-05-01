@@ -9,19 +9,17 @@ using RtspClientSharp.RawFrames;
 using RtspClientSharp.RawFrames.Video;
 using RtspClientSharp.Rtsp;
 
-using SimpleRtspPlayer.RawFramesDecoding.FFmpeg;
-
-namespace SimpleRtspPlayer.RawFramesReceiving
+namespace IPCamera.Model
 {
-    public class RawFramesSource
+    public class VideoSource
     {
         public IntPtr scalerHandle;
         private IntPtr decoderHandle;
         public int Width;
         public int Height;
         public FFmpegPixelFormat PixelFormat;
-        private byte[] _extraData = new byte[0];
-        private bool _disposed;
+        private byte[] extraData = new byte[0];
+        private bool disposed;
         private static readonly TimeSpan RetryDelay = TimeSpan.FromSeconds(5);
         private readonly ConnectionParameters connectionParameters;
         private Task workTask = Task.CompletedTask;
@@ -30,15 +28,19 @@ namespace SimpleRtspPlayer.RawFramesReceiving
 
 
         public event EventHandler DecodedFrameReceived;
-        public event EventHandler<RawFrame> FrameReceived;
         public event EventHandler<string> ConnectionStatusChanged;
 
-
-        public RawFramesSource(ConnectionParameters connectionParameters)
+        /// <summary>
+        /// Initialize a new instance of <see cref="VideoSource"/> from some connection parameters
+        /// </summary>
+        public VideoSource(ConnectionParameters connectionParameters)
         {
             this.connectionParameters = connectionParameters;
         }
 
+        /// <summary>
+        /// Start connection to camera
+        /// </summary>
         public void Start()
         {
             cancellationTokenSource = new CancellationTokenSource();
@@ -51,6 +53,9 @@ namespace SimpleRtspPlayer.RawFramesReceiving
             }, token);
         }
 
+        /// <summary>
+        /// Stop camera connection
+        /// </summary>
         public void Stop()
         {
             cancellationTokenSource.Cancel();
@@ -107,10 +112,15 @@ namespace SimpleRtspPlayer.RawFramesReceiving
             }
         }
 
+        /// <summary>
+        /// Frame has been recieved
+        /// </summary>
         private void RtspClientOnFrameReceived(object sender, RawFrame rawFrame)
         {
-            ProcessRawFrame(rawFrame);
-            FrameReceived?.Invoke(this, rawFrame);
+            if (rawFrame is RawVideoFrame)
+            {
+                ProcessRawFrame(rawFrame as RawVideoFrame);
+            }
         }
 
         /// <summary>
@@ -122,32 +132,29 @@ namespace SimpleRtspPlayer.RawFramesReceiving
         }
 
 
-
-        private void ProcessRawFrame(RawFrame rawFrame)
+        /// <summary>
+        /// Process the raw frame recieved
+        /// </summary>
+        private void ProcessRawFrame(RawVideoFrame rawVideoFrame)
         {
-            if (!(rawFrame is RawVideoFrame rawVideoFrame))
-                return;
-
-
-            FFmpegVideoCodecId codecId = DetectCodecId(rawVideoFrame);
+            // Make sure theres is a decoder available
             if (decoderHandle == IntPtr.Zero)
             {
+                FFmpegVideoCodecId codecId = DetectCodecId(rawVideoFrame);
                 FFmpegVideoPInvoke.CreateVideoDecoder(codecId, out decoderHandle);
-
             }
 
-
+            // Recode
             if (TryDecode(rawVideoFrame))
             {
                 DecodedFrameReceived?.Invoke(this, null);
             }
-
-
-
         }
 
 
-
+        /// <summary>
+        /// Return codec id based on frame type
+        /// </summary>
         private FFmpegVideoCodecId DetectCodecId(RawVideoFrame videoFrame)
         {
             if (videoFrame is RawJpegFrame)
@@ -159,12 +166,9 @@ namespace SimpleRtspPlayer.RawFramesReceiving
         }
 
 
-
-
-
-
-
-
+        /// <summary>
+        /// Decode the video frame
+        /// </summary>
         public unsafe bool TryDecode(RawVideoFrame rawVideoFrame)
         {
             fixed (byte* rawBufferPtr = &rawVideoFrame.FrameSegment.Array[rawVideoFrame.FrameSegment.Offset])
@@ -174,18 +178,18 @@ namespace SimpleRtspPlayer.RawFramesReceiving
                 if (rawVideoFrame is RawH264IFrame rawH264IFrame)
                 {
                     if (rawH264IFrame.SpsPpsSegment.Array != null &&
-                        !_extraData.SequenceEqual(rawH264IFrame.SpsPpsSegment))
+                        !extraData.SequenceEqual(rawH264IFrame.SpsPpsSegment))
                     {
-                        if (_extraData.Length != rawH264IFrame.SpsPpsSegment.Count)
-                            _extraData = new byte[rawH264IFrame.SpsPpsSegment.Count];
+                        if (extraData.Length != rawH264IFrame.SpsPpsSegment.Count)
+                            extraData = new byte[rawH264IFrame.SpsPpsSegment.Count];
 
                         Buffer.BlockCopy(rawH264IFrame.SpsPpsSegment.Array, rawH264IFrame.SpsPpsSegment.Offset,
-                            _extraData, 0, rawH264IFrame.SpsPpsSegment.Count);
+                            extraData, 0, rawH264IFrame.SpsPpsSegment.Count);
 
-                        fixed (byte* initDataPtr = &_extraData[0])
+                        fixed (byte* initDataPtr = &extraData[0])
                         {
                             resultCode = FFmpegVideoPInvoke.SetVideoDecoderExtraData(decoderHandle,
-                                (IntPtr)initDataPtr, _extraData.Length);
+                                (IntPtr)initDataPtr, extraData.Length);
 
 
                         }
@@ -209,16 +213,13 @@ namespace SimpleRtspPlayer.RawFramesReceiving
             }
         }
 
+        /// <summary>
+        /// Dispose this object
+        /// </summary>
         public void Dispose()
         {
-            if (_disposed)
-                return;
-
-            _disposed = true;
             FFmpegVideoPInvoke.RemoveVideoDecoder(decoderHandle);
             FFmpegVideoPInvoke.RemoveVideoScaler(scalerHandle);
-
-            GC.SuppressFinalize(this);
         }
 
 
@@ -229,8 +230,7 @@ namespace SimpleRtspPlayer.RawFramesReceiving
         {
             if (scalerHandle == IntPtr.Zero)
             {
-                FFmpegVideoPInvoke.CreateVideoScaler(0, 0, Width, Height,
-               PixelFormat,
+                FFmpegVideoPInvoke.CreateVideoScaler(0, 0, Width, Height, PixelFormat,
                Width, Height, FFmpegPixelFormat.BGRA, FFmpegScalingQuality.FastBilinear, out scalerHandle);
             }
 

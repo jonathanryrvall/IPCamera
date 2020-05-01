@@ -125,11 +125,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\FFmpegVideoPInvoke.cs" />
-    <Compile Include="Model\RawFramesSource.cs" />
-    <Compile Include="View\VideoView.xaml.cs">
-      <DependentUpon>VideoView.xaml</DependentUpon>
-    </Compile>
-    <Page Include="View\MainWindow.xaml">
+    <Compile Include="Model\VideoSource.cs" />
+    <Page Include="View\MainV.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -139,14 +136,10 @@
     </Compile>
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
-    <Compile Include="View\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="View\MainV.xaml.cs">
+      <DependentUpon>MainV.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\VideoView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

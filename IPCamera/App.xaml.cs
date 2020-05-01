@@ -1,4 +1,4 @@
-﻿namespace SimpleRtspPlayer
+﻿namespace IPCamera
 {
     /// <summary>
     /// Interaction logic for App.xaml

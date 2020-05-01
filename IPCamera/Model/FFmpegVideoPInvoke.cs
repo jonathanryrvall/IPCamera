@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
+namespace IPCamera.Model
 {
     public enum FFmpegVideoCodecId
     {
