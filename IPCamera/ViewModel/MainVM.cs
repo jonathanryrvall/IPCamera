@@ -10,11 +10,11 @@ using RtspClientSharp;
 
 namespace IPCamera.ViewModel
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class MainVM : ViewModelBase
     {
       
 
-        public MainWindowViewModel()
+        public MainVM()
         {
    
    

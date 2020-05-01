@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using RtspClientSharp;
 using RtspClientSharp.RawFrames;
@@ -15,20 +18,23 @@ namespace IPCamera.Model
     {
         public IntPtr scalerHandle;
         private IntPtr decoderHandle;
-        public int Width;
-        public int Height;
-        public FFmpegPixelFormat PixelFormat;
         private byte[] extraData = new byte[0];
-        private bool disposed;
-        private static readonly TimeSpan RetryDelay = TimeSpan.FromSeconds(5);
         private readonly ConnectionParameters connectionParameters;
         private Task workTask = Task.CompletedTask;
         private CancellationTokenSource cancellationTokenSource;
 
+        public int Width;
+        public int Height;
+        public FFmpegPixelFormat PixelFormat;
 
+      //  private WriteableBitmap bitmap;
 
-        public event EventHandler DecodedFrameReceived;
+        public event EventHandler<byte[]> DecodedFrameReceived;
         public event EventHandler<string> ConnectionStatusChanged;
+
+        private IntPtr bitmap;
+        private int stride;
+        byte[] outData;
 
         /// <summary>
         /// Initialize a new instance of <see cref="VideoSource"/> from some connection parameters
@@ -66,6 +72,8 @@ namespace IPCamera.Model
         /// </summary>
         private async Task ReceiveAsync(CancellationToken token)
         {
+            TimeSpan RetryDelay = TimeSpan.FromSeconds(5);
+
             try
             {
                 using (var rtspClient = new RtspClient(connectionParameters))
@@ -147,7 +155,29 @@ namespace IPCamera.Model
             // Recode
             if (TryDecode(rawVideoFrame))
             {
-                DecodedFrameReceived?.Invoke(this, null);
+                
+                if (bitmap == IntPtr.Zero)
+                {
+                    bitmap = Marshal.AllocHGlobal(Width * Height * 4);
+                    stride = Width * 4;
+                    outData = new byte[Width * Height * 4];
+                }
+
+
+                //bitmap.Lock();
+                TransformTo(bitmap, stride);
+                //     bitmap.AddDirtyRect(new Int32Rect(0, 0, Width, Height));
+                //     bitmap.Unlock();
+
+                //  var stride = Width * ((bitmap.Format.BitsPerPixel + 7) / 8);
+
+                //    var bitmapData = new byte[Height * stride];
+
+                //       bitmap.CopyPixels(bitmapData, stride, 0);
+                
+                Marshal.Copy(bitmap, outData, 0, outData.Length);
+
+                DecodedFrameReceived?.Invoke(this, outData);
             }
         }
 
@@ -226,7 +256,7 @@ namespace IPCamera.Model
         /// <summary>
         /// Apply the new changes to a writeable bitmap
         /// </summary>
-        public void TransformTo(WriteableBitmap bitmap)
+        public void TransformTo(IntPtr bitmap, int stride)
         {
             if (scalerHandle == IntPtr.Zero)
             {
@@ -234,7 +264,7 @@ namespace IPCamera.Model
                Width, Height, FFmpegPixelFormat.BGRA, FFmpegScalingQuality.FastBilinear, out scalerHandle);
             }
 
-            FFmpegVideoPInvoke.ScaleDecodedVideoFrame(decoderHandle, scalerHandle, bitmap.BackBuffer, bitmap.BackBufferStride);
+            FFmpegVideoPInvoke.ScaleDecodedVideoFrame(decoderHandle, scalerHandle, bitmap, stride);
         }
 
 

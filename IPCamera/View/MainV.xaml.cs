@@ -12,69 +12,69 @@ namespace IPCamera.View
     /// </summary>
     public partial class MainV
     {
-        public string DeviceAddress { get; set; } = "rtsp://admin:admins@192.168.1.101/user=admin_password=_channel=1_stream=0.sdp";
+        public string DeviceAddress  = "rtsp://admin:admins@192.168.1.101/user=admin_password=_channel=1_stream=0.sdp";
 
-        public string Login { get; set; } = "admin";
-        public string Password { get; set; } = "123456";
-
-
-        private WriteableBitmap bitmap;
-
-
-
+  //      private WriteableBitmap bitmap;
         private VideoSource videoSource;
 
 
         public MainV()
         {
             InitializeComponent();
-            bitmap = new WriteableBitmap(1280, 720, 96.0, 96.0, PixelFormats.Pbgra32, null);
-            RenderOptions.SetBitmapScalingMode(bitmap, BitmapScalingMode.NearestNeighbor);
+            
+          
 
-            bitmap.Lock();
-            bitmap.AddDirtyRect(new Int32Rect(0, 0, bitmap.PixelWidth, bitmap.PixelHeight));
-            bitmap.Unlock();
-
-
-            VideoImage.Source = bitmap;
-
-
-
-            if (!Uri.TryCreate(DeviceAddress, UriKind.Absolute, out Uri deviceUri))
-            {
-                MessageBox.Show("Invalid device address", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-
-
-
+         //   VideoImage.Source = bitmap;
+           
+            // Setup camera
+            var deviceUri = new Uri(DeviceAddress, UriKind.Absolute);
             var connectionParameters = new ConnectionParameters(deviceUri);
+            
             connectionParameters.RtpTransport = RtpTransportProtocol.UDP;
             connectionParameters.CancelTimeout = TimeSpan.FromSeconds(1);
 
-            videoSource = new VideoSource(connectionParameters);
 
+            videoSource = new VideoSource(connectionParameters);
             videoSource.DecodedFrameReceived += OnFrameReceived;
             videoSource.Start();
 
         }
 
+        WriteableBitmap wbm;
 
 
 
+        //public static BitmapSource FromArray(byte[] data, int w, int h, int ch)
+        //{
+        //    PixelFormat format = PixelFormats.Default;
+
+        //    if (ch == 1) format = PixelFormats.Gray8; //grey scale image 0-255
+        //    if (ch == 3) format = PixelFormats.Bgr24; //RGB
+        //    if (ch == 4) format = PixelFormats.Bgr32; //RGB + alpha
 
 
+        //     wbm.WritePixels(new Int32Rect(0, 0, w, h), data, ch * w, 0);
 
-        private void OnFrameReceived(object sender, EventArgs e)
+        //    return wbm;
+        //}
+
+
+        private void OnFrameReceived(object sender, byte[] e)
         {
             App.Current.Dispatcher.Invoke(() =>
             {
+                if (wbm == null)
+                {
+                    wbm = new WriteableBitmap(1280, 720, 96, 96, PixelFormats.Bgr32, null);
+                    VideoImage.Source = wbm;
+                }
 
-                bitmap.Lock();
-                videoSource.TransformTo(bitmap);
-                bitmap.AddDirtyRect(new Int32Rect(0, 0, bitmap.PixelWidth, bitmap.PixelHeight));
-                bitmap.Unlock();
+                wbm.WritePixels(new Int32Rect(0, 0, 1280, 720), e, 1280 * 4, 0);
+
+               
+               // var clone = e.Clone();
+
+                //VideoImage.Source = e.Clone();
 
 
             });

@@ -135,7 +135,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="ViewModel\MainVM.cs" />
     <Compile Include="View\MainV.xaml.cs">
       <DependentUpon>MainV.xaml</DependentUpon>
       <SubType>Code</SubType>
