@@ -35,11 +35,19 @@ namespace IPCamera.ViewModel
         /// </summary>
         public MainVM()
         {
-            gs.VideoSource.DecodedFrameReceived += OnFrameReceived;
-        
+          //  gs.VideoSource.DecodedFrameReceived += OnFrameReceived;
+            gs.MotionDetector.OnMotionDetectionResult += MotionDetector_OnMotionDetectionResult;
             StartRecordCommand = new RelayCommand(gs.Recorder.Start);
             StopRecordCommand = new RelayCommand(gs.Recorder.Stop);
 
+        }
+
+        private void MotionDetector_OnMotionDetectionResult(object sender, Model.MotionDetection.MotionDetectionResult e)
+        {
+            App.Current.Dispatcher.Invoke(() =>
+            {
+                ShowFrame(e.Bitmap);
+            });
         }
 
 

@@ -8,7 +8,7 @@ namespace IPCamera.Model.MotionDetection
 {
     public class MotionDetectionResult
     {
-        public byte[] Bitmap;
+        public ImageFrame Bitmap;
         public int Hotspots;
         public bool Motion;
     }

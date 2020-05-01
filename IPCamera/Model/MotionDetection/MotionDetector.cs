@@ -14,10 +14,9 @@ namespace IPCamera.Model.MotionDetection
         public event EventHandler<MotionDetectionResult> OnMotionDetectionResult;
 
         private ImageFrame lastFrame = null;
-
-        private bool outputResult;
         private byte hotspotThreshold;
-        private byte[] result;
+        private ImageFrame resultFrame;
+
         private double maxHotspots;
 
 
@@ -55,52 +54,70 @@ namespace IPCamera.Model.MotionDetection
         /// Count how many pixels exceeds threshold
         /// </summary>
         private MotionDetectionResult RunKernel(ImageFrame newFrame,
-                                 ImageFrame oldFrame)
+                                                ImageFrame oldFrame)
         {
-            const int maxDiff = 100;
             int pixelCount = newFrame.Width * newFrame.Height;
             int hotSpotCount = 0;
 
-            if (result == null)
+            if (resultFrame == null)
             {
-                result = new byte[pixelCount * 4];
+                resultFrame = new ImageFrame();
+                resultFrame.Data = new byte[pixelCount * 4];
+                resultFrame.Width = newFrame.Width;
+                resultFrame.Height = newFrame.Height;
             }
 
 
 
             for (int p = 0; p < pixelCount; p++)
             {
-                int rNew = newFrame.Data[p * 4 + 2];
-                int gNew = newFrame.Data[p * 4 + 1];
-                int bNew = newFrame.Data[p * 4 + 0];
+                byte rNew = newFrame.Data[p * 4 + 2];
+                byte gNew = newFrame.Data[p * 4 + 1];
+                byte bNew = newFrame.Data[p * 4 + 0];
 
-                int rOld = oldFrame.Data[p * 4 + 2];
-                int gOld = oldFrame.Data[p * 4 + 1];
-                int bOld = oldFrame.Data[p * 4 + 0];
+                byte rOld = oldFrame.Data[p * 4 + 2];
+                byte gOld = oldFrame.Data[p * 4 + 1];
+                byte bOld = oldFrame.Data[p * 4 + 0];
 
-                if (rNew - rOld > maxDiff ||
-                    gNew - gOld > maxDiff ||
-                    bNew - bOld > maxDiff)
-                {
-                    hotSpotCount++;
-                    result[p * 4 + 0] = 255;
-                    result[p * 4 + 1] = 0;
-                    result[p * 4 + 2] = 0;
-                    result[p * 4 + 3] = 255;
+                byte rDiff = 0;
+                byte gDiff = 0;
+                byte bDiff = 0;
 
-                }
-                else
-                {
-                    result[p * 4 + 0] = 255;
-                    result[p * 4 + 1] = 255;
-                    result[p * 4 + 2] = 255;
-                    result[p * 4 + 3] = 255;
-                }
+
+                rDiff = rNew > rOld ? (byte)(rNew - rOld) : (byte)(rOld - rNew);
+                gDiff = gNew > gOld ? (byte)(gNew - gOld) : (byte)(gOld - gNew);
+                bDiff = bNew > bOld ? (byte)(bNew - bOld) : (byte)(bOld - bNew);
+
+                
+
+                resultFrame.Data[p * 4 + 0] = rDiff;
+                resultFrame.Data[p * 4 + 1] = gDiff;
+                resultFrame.Data[p * 4 + 2] = bDiff;
+                resultFrame.Data[p * 4 + 3] = 255;
+
+                //if (rNew - rOld > maxDiff ||
+                //    gNew - gOld > maxDiff ||
+                //    bNew - bOld > maxDiff)
+                //{
+                //    hotSpotCount++;
+                //    resultFrame.Data[p * 4 + 0] = 255;
+                //    resultFrame.Data[p * 4 + 1] = 0;
+                //    resultFrame.Data[p * 4 + 2] = 0;
+                //    resultFrame.Data[p * 4 + 3] = 255;
+
+                //}
+                //else
+                //{
+                //    resultFrame.Data[p * 4 + 0] = 255;
+                //    resultFrame.Data[p * 4 + 1] = 255;
+                //    resultFrame.Data[p * 4 + 2] = 255;
+                //    resultFrame.Data[p * 4 + 3] = 255;
+                //}
             }
 
             bool isMotion = hotspotThreshold > ((double)pixelCount * maxHotspots);
 
-                return new MotionDetectionResult() { Bitmap = result, Hotspots = hotSpotCount, Motion = isMotion };
+            return new MotionDetectionResult() { Bitmap = resultFrame, Hotspots = hotSpotCount, Motion = isMotion };
         }
     }
 }
