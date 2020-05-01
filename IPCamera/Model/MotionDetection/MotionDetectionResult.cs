@@ -8,7 +8,9 @@ namespace IPCamera.Model.MotionDetection
 {
     public class MotionDetectionResult
     {
-        public ImageFrame Bitmap;
+        public ImageFrame ResultFrame;
+        public ImageFrame ImageFrame;
+
         public int HotspotCount;
         public double HotspotPercentage;
         public bool Motion;

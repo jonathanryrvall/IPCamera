@@ -113,7 +113,7 @@ namespace IPCamera.ViewModel
                 if (ViewportMode == ViewportMode.MotionDetectionDiff ||
                     viewportMode == ViewportMode.MotionDetectionThreshold)
                 {
-                    ShowFrame(e.Bitmap);
+                    ShowFrame(e.ResultFrame);
                 }
 
                 MotionDetectionHotspotsPercentage = e.HotspotPercentage;

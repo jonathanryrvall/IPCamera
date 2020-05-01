@@ -38,12 +38,13 @@ namespace IPCamera
 
             // Setup motion detection
             gs.MotionDetector = new Model.MotionDetection.MotionDetector(gs.VideoSource, gs.Config);
+            gs.MotionDetector.OnMotionDetectionResult += gs.MotionDetector_OnMotionDetectionResult;
 
 
             // Start main window
             application.Run(new MainV());
         }
 
-       
+      
     }
 }

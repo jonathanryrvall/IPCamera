@@ -128,11 +128,11 @@ namespace IPCamera.Model.MotionDetection
             }
 
             MotionDetectionResult result = new MotionDetectionResult();
-            result.Bitmap = resultFrame;
+            result.ResultFrame = resultFrame;
             result.HotspotCount = hotSpotCount;
             result.HotspotPercentage = ((double)hotSpotCount / (double)pixelCount) * 100;
             result.Motion = result.HotspotPercentage > maxHotspots;
-
+            result.ImageFrame = newFrame;
             return result;
         }
     }

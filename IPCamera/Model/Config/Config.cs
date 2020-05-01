@@ -11,7 +11,7 @@ namespace IPCamera.Model.Config
     {
         private string connectionString = "rtsp://admin:admins@192.168.1.101/user=admin_password=_channel=1_stream=0.sdp";
 
-        private byte hotspotThreshold = 50;
+        private byte hotspotThreshold = 60;
         private double maxHotspots = 20;
 
 

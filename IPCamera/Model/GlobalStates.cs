@@ -43,5 +43,13 @@ namespace IPCamera.Model
 
             MotionDetector.UpdateConfig(Config);
         }
+
+        public void MotionDetector_OnMotionDetectionResult(object sender, Model.MotionDetection.MotionDetectionResult e)
+        {
+            if (e.Motion)
+            {
+                FrameSaver.Save(e.ImageFrame, FrameSaver.GetTimestampFilename());
+            }
+        }
     }
 }

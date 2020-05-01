@@ -123,6 +123,7 @@
     <Compile Include="Model\Config\ConfigExtensions.cs" />
     <Compile Include="Model\Config\ConfigMonitor.cs" />
     <Compile Include="Model\MotionDetection\ResultMode.cs" />
+    <Compile Include="Model\Recording\FrameSaver.cs" />
     <Compile Include="View\ViewportV.xaml.cs">
       <DependentUpon>ViewportV.xaml</DependentUpon>
     </Compile>

@@ -37,35 +37,10 @@ namespace IPCamera.Model.Recording
         {
             if (active)
             {
-                SaveFrame(frame);
+                FrameSaver.Save(frame, FrameSaver.GetTimestampFilename());
             }
         }
 
-        /// <summary>
-        /// Save a frame!
-        /// </summary>
-        private void SaveFrame(ImageFrame frame)
-        {
-            // Create bitmap first time
-            //if (bitmap == null)
-            //{
-                
-            //}
-            var bitmap = new WriteableBitmap(frame.Width, frame.Height, 96, 96, PixelFormats.Bgr32, null);
-            // Write pixels to bitmap
-            bitmap.WritePixels(new Int32Rect(0, 0, frame.Width, frame.Height), frame.Data, frame.Width * 4, 0);
-
-            // Save bitmap as png image
-            string fileName = path + "/" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".png";
-            using (FileStream stream5 = new FileStream(fileName, FileMode.Create))
-            {
-                PngBitmapEncoder encoder5 = new PngBitmapEncoder();
-                encoder5.Frames.Add(BitmapFrame.Create(bitmap));
-                encoder5.Save(stream5);
-            }
-        }
-
-       
 
         /// <summary>
         /// Start recording
