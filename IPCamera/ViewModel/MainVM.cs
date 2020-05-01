@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -23,31 +24,82 @@ namespace IPCamera.ViewModel
         public RelayCommand StartRecordCommand { get; set; }
         public RelayCommand StopRecordCommand { get; set; }
 
+        private ViewportMode viewportMode;
+
+        public Config Config => gs.Config;
+
         public WriteableBitmap LiveImage
         {
             get => liveImage;
             set => Set(ref liveImage, value);
         }
+        public ViewportMode ViewportMode
+        {
+            get => viewportMode;
+            set
+            {
+                Set(ref viewportMode, value);
 
-    
+                switch(viewportMode)
+                {
+                    case ViewportMode.MotionDetectionDiff:
+                        gs.MotionDetector.ResultMode = Model.MotionDetection.ResultMode.Diff;
+                        break;
+                    case ViewportMode.MotionDetectionThreshold:
+                        gs.MotionDetector.ResultMode = Model.MotionDetection.ResultMode.Threshold;
+                        break;
+
+                }
+            }
+        }
+
+        
+
+        /// <summary>
+        /// Get a dictionary of <see cref="Model.ViewportMode"/>s
+        /// </summary>
+        public Dictionary<ViewportMode, string> ViewportModes
+        {
+            get
+            {
+                var modes = new Dictionary<ViewportMode, string>();
+
+                foreach (ViewportMode t in (ViewportMode[])Enum.GetValues(typeof(ViewportMode)))
+                {
+                    string desc = t.ToString();
+                    modes.Add(t, desc);
+                }
+                return modes;
+            }
+        }
+
         /// <summary>
         /// Video source
         /// </summary>
         public MainVM()
         {
-          //  gs.VideoSource.DecodedFrameReceived += OnFrameReceived;
+            gs.VideoSource.DecodedFrameReceived += OnFrameReceived;
             gs.MotionDetector.OnMotionDetectionResult += MotionDetector_OnMotionDetectionResult;
             StartRecordCommand = new RelayCommand(gs.Recorder.Start);
             StopRecordCommand = new RelayCommand(gs.Recorder.Stop);
-
+            
         }
 
+    
+
+        /// <summary>
+        /// Recieve result from motion detection
+        /// </summary>
         private void MotionDetector_OnMotionDetectionResult(object sender, Model.MotionDetection.MotionDetectionResult e)
         {
-            App.Current.Dispatcher.Invoke(() =>
+            if (ViewportMode == ViewportMode.MotionDetectionDiff ||
+                viewportMode == ViewportMode.MotionDetectionThreshold)
             {
-                ShowFrame(e.Bitmap);
-            });
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    ShowFrame(e.Bitmap);
+                });
+            }
         }
 
 
@@ -56,10 +108,13 @@ namespace IPCamera.ViewModel
         /// </summary>
         private void OnFrameReceived(object sender, ImageFrame frame)
         {
-            App.Current.Dispatcher.Invoke(() =>
+            if (ViewportMode == ViewportMode.Image)
             {
-                ShowFrame(frame);
-            });
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    ShowFrame(frame);
+                });
+            }
         }
 
         /// <summary>

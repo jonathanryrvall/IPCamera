@@ -19,13 +19,24 @@ namespace IPCamera.Model.MotionDetection
 
         private double maxHotspots;
 
+        public ResultMode ResultMode;
 
         public MotionDetector(VideoSource videoSource,
                               Config.Config config)
         {
             videoSource.DecodedFrameReceived += VideoSource_DecodedFrameReceived;
-            hotspotThreshold = config.HotSpotThreshold;
-            maxHotspots = config.MaxHotSpots;
+            
+            UpdateConfig(config);
+        }
+
+
+        /// <summary>
+        /// Update the configuration
+        /// </summary>
+        public void UpdateConfig(Config.Config config)
+        {
+            hotspotThreshold = config.HotspotThreshold;
+            maxHotspots = config.MaxHotspots;
         }
 
         /// <summary>
@@ -65,6 +76,12 @@ namespace IPCamera.Model.MotionDetection
                 resultFrame.Data = new byte[pixelCount * 4];
                 resultFrame.Width = newFrame.Width;
                 resultFrame.Height = newFrame.Height;
+
+                // Init the alpha channel
+                for (int i = 0; i < pixelCount; i++)
+                {
+                    resultFrame.Data[i * 4 + 3] = 255;
+                }
             }
 
 
@@ -79,22 +96,33 @@ namespace IPCamera.Model.MotionDetection
                 byte gOld = oldFrame.Data[p * 4 + 1];
                 byte bOld = oldFrame.Data[p * 4 + 0];
 
-                byte rDiff = 0;
-                byte gDiff = 0;
-                byte bDiff = 0;
 
+                byte rDiff = rNew > rOld ? (byte)(rNew - rOld) : (byte)(rOld - rNew);
+                byte gDiff = gNew > gOld ? (byte)(gNew - gOld) : (byte)(gOld - gNew);
+                byte bDiff = bNew > bOld ? (byte)(bNew - bOld) : (byte)(bOld - bNew);
 
-                rDiff = rNew > rOld ? (byte)(rNew - rOld) : (byte)(rOld - rNew);
-                gDiff = gNew > gOld ? (byte)(gNew - gOld) : (byte)(gOld - gNew);
-                bDiff = bNew > bOld ? (byte)(bNew - bOld) : (byte)(bOld - bNew);
+                bool isHotspot = rDiff > hotspotThreshold ||
+                                 gDiff > hotspotThreshold ||
+                                 bDiff > hotspotThreshold;
 
-                
+                if (ResultMode == ResultMode.Diff)
+                {
+                    resultFrame.Data[p * 4 + 0] = rDiff;
+                    resultFrame.Data[p * 4 + 1] = gDiff;
+                    resultFrame.Data[p * 4 + 2] = bDiff;
+                }
 
-                resultFrame.Data[p * 4 + 0] = rDiff;
-                resultFrame.Data[p * 4 + 1] = gDiff;
-                resultFrame.Data[p * 4 + 2] = bDiff;
-                resultFrame.Data[p * 4 + 3] = 255;
+                else if (ResultMode == ResultMode.Threshold)
+                {
+                    resultFrame.Data[p * 4 + 0] = 0;
+                    resultFrame.Data[p * 4 + 1] = 0;
+                    resultFrame.Data[p * 4 + 2] = isHotspot ? (byte)255 : (byte)0;
+                }
 
+                if (isHotspot)
+                {
+                    hotSpotCount++;
+                }
                 //if (rNew - rOld > maxDiff ||
                 //    gNew - gOld > maxDiff ||
                 //    bNew - bOld > maxDiff)
@@ -115,9 +143,9 @@ namespace IPCamera.Model.MotionDetection
                 //}
             }
 
-            bool isMotion = hotspotThreshold > ((double)pixelCount * maxHotspots);
+            bool isMotion = hotSpotCount > ((double)pixelCount * maxHotspots);
 
-            return new MotionDetectionResult() { Bitmap = resultFrame, Hotspots = hotSpotCount, Motion = isMotion };
+            return new MotionDetectionResult() { Bitmap = resultFrame, HotspotCount = hotSpotCount, Motion = isMotion };
         }
     }
 }

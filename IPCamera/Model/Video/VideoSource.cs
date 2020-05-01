@@ -37,7 +37,7 @@ namespace IPCamera.Model
 
         public VideoSource (Config.Config config)
         {
-            var deviceUri = new Uri(config.ConnectionStrinng, UriKind.Absolute);
+            var deviceUri = new Uri(config.ConnectionString, UriKind.Absolute);
             connectionParameters = new ConnectionParameters(deviceUri);
 
             connectionParameters.RtpTransport = RtpTransportProtocol.UDP;

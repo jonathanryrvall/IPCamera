@@ -7,30 +7,35 @@ using System.Threading.Tasks;
 
 namespace IPCamera.Model.Config
 {
-    public class Config : ObservableObject
+    public class Config : ObservableObject, IConfig
     {
         private string connectionString = "rtsp://admin:admins@192.168.1.101/user=admin_password=_channel=1_stream=0.sdp";
 
-        private byte hotSpotThreshold = 50;
-        private double maxHotSpots = 20;
+        private byte hotspotThreshold = 50;
+        private double maxHotspots = 20;
 
 
-        public string ConnectionStrinng
+        public string ConnectionString
         {
             get => connectionString;
             set => Set(ref connectionString, value);
         }
 
-        public byte HotSpotThreshold
+        public byte HotspotThreshold
         {
-            get => hotSpotThreshold;
-            set => Set(ref hotSpotThreshold, value);
+            get => hotspotThreshold;
+            set => Set(ref hotspotThreshold, value);
         }
 
-        public double MaxHotSpots
+        public double MaxHotspots
         {
-            get => maxHotSpots;
-            set => Set(ref maxHotSpots, value);
+            get => maxHotspots;
+            set => Set(ref maxHotspots, value);
+        }
+
+        public void AddMissing()
+        {
+            
         }
     }
 }

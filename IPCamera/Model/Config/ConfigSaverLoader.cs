@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -11,37 +12,21 @@ namespace IPCamera.Model.Config
 {
     public static class ConfigSaverLoader
     {
+        private static List<string> delayedSaveLocks;
 
-
-        /// <summary>
-        /// Try to load config from file, if it failed create a new config object and save it to file
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static T LoadCreateDefault<T>(string path) where T : new()
-        {
-            T config = Load<T>(path);
-
-            if (config == null)
-            {
-                config = new T();
-            }
-
-            Save(config, path);
-
-            return config;
-        }
+            
 
         /// <summary>
         /// Load configuration
         /// </summary>
-        public static T Load<T>(string path) where T : new()
+        public static T Load<T>(string path) where T : IConfig, new()
         {
             // File exists?
             if (!File.Exists(path))
             {
-                return default;
+                T config = new T();
+                (config as IConfig).AddMissingCascade();
+                return config;
             }
 
             // Read file
@@ -52,10 +37,48 @@ namespace IPCamera.Model.Config
             using (StringReader reader = new StringReader(xml))
             {
                 T config = (T)xsSubmit.Deserialize(reader);
+                (config as IConfig).AddMissingCascade();
                 return config;
             }
         }
 
+        /// <summary>
+        /// Save configuration after a delay, the save configuration cannot be saved during this delay
+        /// </summary>
+        public static void DelayedSave(object config, string path, int ms = 800)
+        {
+            // Create list of locked paths that cannot be saved during delay
+            if (delayedSaveLocks == null)
+            {
+                delayedSaveLocks = new List<string>();
+            }
+
+            // Check if lock exists
+            if (delayedSaveLocks.Contains(path))
+            {
+                return;
+            }
+
+            // Add lock
+            delayedSaveLocks.Add(path);
+
+            // Create new timer
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(ms) };
+            timer.Tick += (sender, args) =>
+            {
+                // Save
+                Save(config, path);
+
+                // Remove lock
+                delayedSaveLocks.Remove(path);
+
+                // Stop timer to allow gc
+                timer.Stop();
+            };
+
+
+            timer.Start();
+        }
 
         /// <summary>
         /// Save configureation
@@ -76,8 +99,6 @@ namespace IPCamera.Model.Config
                 }
             }
         }
-
-
 
     }
 }

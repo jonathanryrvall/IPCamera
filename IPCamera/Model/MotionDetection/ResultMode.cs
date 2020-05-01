@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace IPCamera.Model.MotionDetection
 {
-    public class MotionDetectionResult
+    public enum ResultMode
     {
-        public ImageFrame Bitmap;
-        public int HotspotCount;
-        public double HotspotPercentage;
-        public bool Motion;
+        Diff,
+        Threshold
     }
 }

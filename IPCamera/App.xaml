@@ -6,6 +6,16 @@
              xmlns:vm="clr-namespace:IPCamera.ViewModel"
              d1p1:Ignorable="d">
     <Application.Resources>
-        <vm:ViewModelLocator x:Key="ViewModelLocator" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                <ResourceDictionary Source="pack://application:,,,/Skin/StyledControls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Skin/DarkBlue.xaml" />
+
+                <ResourceDictionary>
+                    <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -2,6 +2,7 @@
 using IPCamera.Model;
 using IPCamera.Model.MotionDetection;
 using IPCamera.Model.Recording;
+using System;
 
 namespace IPCamera.Model
 {
@@ -34,5 +35,13 @@ namespace IPCamera.Model
         public IRecorder Recorder;
         public MotionDetector MotionDetector;
 
+        public Config.ConfigMonitor ConfigMonitor;
+
+        public void ConfigMonitor_ConfigChanged(object sender, EventArgs e)
+        {
+            Model.Config.ConfigSaverLoader.DelayedSave(Config, FilePaths.ConfigPath());
+
+            MotionDetector.UpdateConfig(Config);
+        }
     }
 }

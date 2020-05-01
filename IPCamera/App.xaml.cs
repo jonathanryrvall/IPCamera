@@ -3,6 +3,7 @@ using IPCamera.Model.Config;
 using IPCamera.Model.Recording;
 using IPCamera.View;
 using System;
+using System.IO;
 
 namespace IPCamera
 {
@@ -20,7 +21,13 @@ namespace IPCamera
             application.InitializeComponent();
 
             // Read config
-            gs.Config = ConfigSaverLoader.LoadCreateDefault<Config>(FilePaths.ConfigPath());
+            gs.Config = ConfigSaverLoader.Load<Config>(FilePaths.ConfigPath());
+            if (!File.Exists(FilePaths.ConfigPath()))
+            {
+                ConfigSaverLoader.Save(gs.Config, FilePaths.ConfigPath());
+            }
+            gs.ConfigMonitor = new ConfigMonitor(gs.Config);
+            gs.ConfigMonitor.ConfigChanged += gs.ConfigMonitor_ConfigChanged;
 
             // Setup a video source
             gs.VideoSource = new VideoSource(gs.Config);
@@ -37,5 +44,6 @@ namespace IPCamera
             application.Run(new MainV());
         }
 
+       
     }
 }
