@@ -70,6 +70,7 @@ namespace IPCamera.Model.MotionDetection
             int pixelCount = newFrame.Width * newFrame.Height;
             int hotSpotCount = 0;
 
+            // Init the result frame first time if it has not yet been initialized
             if (resultFrame == null)
             {
                 resultFrame = new ImageFrame();
@@ -123,29 +124,16 @@ namespace IPCamera.Model.MotionDetection
                 {
                     hotSpotCount++;
                 }
-                //if (rNew - rOld > maxDiff ||
-                //    gNew - gOld > maxDiff ||
-                //    bNew - bOld > maxDiff)
-                //{
-                //    hotSpotCount++;
-                //    resultFrame.Data[p * 4 + 0] = 255;
-                //    resultFrame.Data[p * 4 + 1] = 0;
-                //    resultFrame.Data[p * 4 + 2] = 0;
-                //    resultFrame.Data[p * 4 + 3] = 255;
-
-                //}
-                //else
-                //{
-                //    resultFrame.Data[p * 4 + 0] = 255;
-                //    resultFrame.Data[p * 4 + 1] = 255;
-                //    resultFrame.Data[p * 4 + 2] = 255;
-                //    resultFrame.Data[p * 4 + 3] = 255;
-                //}
+           
             }
 
-            bool isMotion = hotSpotCount > ((double)pixelCount * maxHotspots);
+            MotionDetectionResult result = new MotionDetectionResult();
+            result.Bitmap = resultFrame;
+            result.HotspotCount = hotSpotCount;
+            result.HotspotPercentage = ((double)hotSpotCount / (double)pixelCount) * 100;
+            result.Motion = result.HotspotPercentage > maxHotspots;
 
-            return new MotionDetectionResult() { Bitmap = resultFrame, HotspotCount = hotSpotCount, Motion = isMotion };
+            return result;
         }
     }
 }

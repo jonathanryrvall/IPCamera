@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  
-    <!-- Main colors -->
+
+    <!--  Main colors  -->
     <Color x:Key="ScrollBarButton">#FF525252</Color>
     <Color x:Key="Inactive">#FF1A1A1C</Color>
     <Color x:Key="Disabled">#ff666666</Color>
@@ -16,146 +16,146 @@
     <Color x:Key="PrimaryMid">#ffde3d31</Color>
     <Color x:Key="PrimaryDark">#FFb63228</Color>
     <Color x:Key="ItemHover">#FF3E3E43</Color>
-    
+
     <!--<Color x:Key="PrimaryLight">#ff1193f6</Color>
     <Color x:Key="PrimaryMid">#ff0f82da</Color>
     <Color x:Key="PrimaryDark">#FF0c6bb2</Color>-->
     <Color x:Key="PrimaryMidDisabled">#66de3d31</Color>
 
     <Color x:Key="Paper">#FF2d2d30</Color>
-  
+
     <Color x:Key="PaperTextEnabled">#ffffffff</Color>
     <Color x:Key="PaperTextDisabled">#66ffffff</Color>
 
     <Color x:Key="HeaderTextEnabled">#ffffffff</Color>
     <Color x:Key="HeaderTextDisabled">#66ffffff</Color>
 
-    <!-- Main brushes -->
-    <SolidColorBrush x:Key="ScanningOverlayBrush" Color="#99141414"/>
-    <SolidColorBrush x:Key="PaperBrush" Color="{StaticResource Paper}"/>
-    <SolidColorBrush x:Key="PaperTextEnabledBrush" Color="{StaticResource PaperTextEnabled}"/>
+    <!--  Main brushes  -->
+    <SolidColorBrush x:Key="ScanningOverlayBrush" Color="#99141414" />
+    <SolidColorBrush x:Key="PaperBrush" Color="{StaticResource Paper}" />
+    <SolidColorBrush x:Key="PaperTextEnabledBrush" Color="{StaticResource PaperTextEnabled}" />
 
-    <SolidColorBrush x:Key="HeaderBrush" Color="#FF2D2D2D"/>
-    <SolidColorBrush x:Key="HeaderBrushHover" Color="#FF0F0F0F"/>
-    <SolidColorBrush x:Key="HeaderBrushClick" Color="{StaticResource PrimaryLight}"/>
-    <SolidColorBrush x:Key="HeaderTextBrush" Color="{StaticResource HeaderTextEnabled}"/>
+    <SolidColorBrush x:Key="HeaderBrush" Color="#FF2D2D2D" />
+    <SolidColorBrush x:Key="HeaderBrushHover" Color="#FF0F0F0F" />
+    <SolidColorBrush x:Key="HeaderBrushClick" Color="{StaticResource PrimaryLight}" />
+    <SolidColorBrush x:Key="HeaderTextBrush" Color="{StaticResource HeaderTextEnabled}" />
 
-    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource PrimaryMid}"/>
-  
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource PrimaryMid}" />
 
-    <!-- Button brushes -->
-    <SolidColorBrush x:Key="ButtonNormalForeground" Color="{StaticResource HeaderTextEnabled}"/>
-    <SolidColorBrush x:Key="ButtonNormalBorder" Color="{StaticResource PrimaryMid}"/>
-    <SolidColorBrush x:Key="ButtonNormalBackground" Color="{StaticResource PrimaryMid}"/>
 
-    <SolidColorBrush x:Key="ButtonHoverForeground" Color="{StaticResource HeaderTextEnabled}"/>
-    <SolidColorBrush x:Key="ButtonHoverBorder" Color="{StaticResource PrimaryLight}"/>
-    <SolidColorBrush x:Key="ButtonHoverBackground" Color="{StaticResource PrimaryLight}"/>
+    <!--  Button brushes  -->
+    <SolidColorBrush x:Key="ButtonNormalForeground" Color="{StaticResource HeaderTextEnabled}" />
+    <SolidColorBrush x:Key="ButtonNormalBorder" Color="{StaticResource PrimaryMid}" />
+    <SolidColorBrush x:Key="ButtonNormalBackground" Color="{StaticResource PrimaryMid}" />
 
-    <SolidColorBrush x:Key="ButtonClickForeground" Color="{StaticResource HeaderTextEnabled}"/>
-    <SolidColorBrush x:Key="ButtonClickBorder" Color="{StaticResource PrimaryDark}"/>
-    <SolidColorBrush x:Key="ButtonClickBackground" Color="{StaticResource PrimaryDark}"/>
+    <SolidColorBrush x:Key="ButtonHoverForeground" Color="{StaticResource HeaderTextEnabled}" />
+    <SolidColorBrush x:Key="ButtonHoverBorder" Color="{StaticResource PrimaryLight}" />
+    <SolidColorBrush x:Key="ButtonHoverBackground" Color="{StaticResource PrimaryLight}" />
 
-    <SolidColorBrush x:Key="ButtonDisabledForeground" Color="{StaticResource HeaderTextDisabled}"/>
-    <SolidColorBrush x:Key="ButtonDisabledBorder" Color="{StaticResource PrimaryMidDisabled}"/>
-    <SolidColorBrush x:Key="ButtonDisabledBackground" Color="{StaticResource PrimaryMidDisabled}"/>
+    <SolidColorBrush x:Key="ButtonClickForeground" Color="{StaticResource HeaderTextEnabled}" />
+    <SolidColorBrush x:Key="ButtonClickBorder" Color="{StaticResource PrimaryDark}" />
+    <SolidColorBrush x:Key="ButtonClickBackground" Color="{StaticResource PrimaryDark}" />
 
-    <!-- TextBox brushes -->
-    <SolidColorBrush x:Key="TextBoxNormalForeground" Color="{StaticResource Active}"/>
-    <SolidColorBrush x:Key="TextBoxNormalBorder" Color="{StaticResource Inactive}"/>
-    <SolidColorBrush x:Key="TextBoxNormalBackground" Color="{StaticResource Background}"/>
+    <SolidColorBrush x:Key="ButtonDisabledForeground" Color="{StaticResource HeaderTextDisabled}" />
+    <SolidColorBrush x:Key="ButtonDisabledBorder" Color="{StaticResource PrimaryMidDisabled}" />
+    <SolidColorBrush x:Key="ButtonDisabledBackground" Color="{StaticResource PrimaryMidDisabled}" />
 
-    <SolidColorBrush x:Key="TextBoxHoverForeground" Color="{StaticResource PrimaryMid}"/>
-    <SolidColorBrush x:Key="TextBoxHoverBorder" Color="{StaticResource PrimaryMid}"/>
-    <SolidColorBrush x:Key="TextBoxHoverBackground" Color="{StaticResource Background}"/>
+    <!--  TextBox brushes  -->
+    <SolidColorBrush x:Key="TextBoxNormalForeground" Color="{StaticResource Active}" />
+    <SolidColorBrush x:Key="TextBoxNormalBorder" Color="{StaticResource Inactive}" />
+    <SolidColorBrush x:Key="TextBoxNormalBackground" Color="{StaticResource Background}" />
 
-    <SolidColorBrush x:Key="TextBoxClickForeground" Color="{StaticResource Active}"/>
-    <SolidColorBrush x:Key="TextBoxClickBorder" Color="{StaticResource PrimaryMid}"/>
-    <SolidColorBrush x:Key="TextBoxClickBackground" Color="{StaticResource Background}"/>
+    <SolidColorBrush x:Key="TextBoxHoverForeground" Color="{StaticResource PrimaryMid}" />
+    <SolidColorBrush x:Key="TextBoxHoverBorder" Color="{StaticResource PrimaryMid}" />
+    <SolidColorBrush x:Key="TextBoxHoverBackground" Color="{StaticResource Background}" />
 
-    <SolidColorBrush x:Key="TextBoxDisabledForeground" Color="{StaticResource Disabled}"/>
-    <SolidColorBrush x:Key="TextBoxDisabledBorder" Color="{StaticResource Disabled}"/>
-    <SolidColorBrush x:Key="TextBoxDisabledBackground" Color="{StaticResource Background}"/>
+    <SolidColorBrush x:Key="TextBoxClickForeground" Color="{StaticResource Active}" />
+    <SolidColorBrush x:Key="TextBoxClickBorder" Color="{StaticResource PrimaryMid}" />
+    <SolidColorBrush x:Key="TextBoxClickBackground" Color="{StaticResource Background}" />
 
-    <!-- RadioButton/CheckBox brushes -->
-    <SolidColorBrush x:Key="RBCBNormalForeground" Color="{StaticResource Active}"/>
-    <SolidColorBrush x:Key="RBCBNormalBackground" Color="Transparent"/>
+    <SolidColorBrush x:Key="TextBoxDisabledForeground" Color="{StaticResource Disabled}" />
+    <SolidColorBrush x:Key="TextBoxDisabledBorder" Color="{StaticResource Disabled}" />
+    <SolidColorBrush x:Key="TextBoxDisabledBackground" Color="{StaticResource Background}" />
 
-    <SolidColorBrush x:Key="RBCBHoverForeground" Color="{StaticResource PrimaryMid}"/>
-    <SolidColorBrush x:Key="RBCBHoverBackground" Color="Transparent"/>
+    <!--  RadioButton/CheckBox brushes  -->
+    <SolidColorBrush x:Key="RBCBNormalForeground" Color="{StaticResource Active}" />
+    <SolidColorBrush x:Key="RBCBNormalBackground" Color="Transparent" />
 
-    <SolidColorBrush x:Key="RBCBClickForeground" Color="{StaticResource PrimaryMid}"/>
-    <SolidColorBrush x:Key="RBCBClickBackground" Color="{StaticResource PrimaryMid}"/>
+    <SolidColorBrush x:Key="RBCBHoverForeground" Color="{StaticResource PrimaryMid}" />
+    <SolidColorBrush x:Key="RBCBHoverBackground" Color="Transparent" />
 
-    <SolidColorBrush x:Key="RBCBDisabledForeground" Color="{StaticResource Disabled}"/>
-    <SolidColorBrush x:Key="RBCBDisabledBackground" Color="Transparent"/>
+    <SolidColorBrush x:Key="RBCBClickForeground" Color="{StaticResource PrimaryMid}" />
+    <SolidColorBrush x:Key="RBCBClickBackground" Color="{StaticResource PrimaryMid}" />
 
-    <!-- ComboBox brushes -->
-    <SolidColorBrush x:Key="ComboBoxNormalForeground" Color="{StaticResource Active}"/>
-    <SolidColorBrush x:Key="ComboBoxNormalBorder" Color="{StaticResource Inactive}"/>
-    <SolidColorBrush x:Key="ComboBoxNormalBackground" Color="{StaticResource Background}"/>
+    <SolidColorBrush x:Key="RBCBDisabledForeground" Color="{StaticResource Disabled}" />
+    <SolidColorBrush x:Key="RBCBDisabledBackground" Color="Transparent" />
 
-    <SolidColorBrush x:Key="ComboBoxHoverForeground" Color="{StaticResource PrimaryMid}"/>
-    <SolidColorBrush x:Key="ComboBoxHoverBorder" Color="{StaticResource PrimaryMid}"/>
-    <SolidColorBrush x:Key="ComboBoxHoverBackground" Color="{StaticResource Background}"/>
+    <!--  ComboBox brushes  -->
+    <SolidColorBrush x:Key="ComboBoxNormalForeground" Color="{StaticResource Active}" />
+    <SolidColorBrush x:Key="ComboBoxNormalBorder" Color="{StaticResource Inactive}" />
+    <SolidColorBrush x:Key="ComboBoxNormalBackground" Color="{StaticResource Background}" />
 
-    <SolidColorBrush x:Key="ComboBoxClickForeground" Color="{StaticResource Active}"/>
-    <SolidColorBrush x:Key="ComboBoxClickBorder" Color="{StaticResource Active}"/>
-    <SolidColorBrush x:Key="ComboBoxClickBackground" Color="{StaticResource Background}"/>
+    <SolidColorBrush x:Key="ComboBoxHoverForeground" Color="{StaticResource PrimaryMid}" />
+    <SolidColorBrush x:Key="ComboBoxHoverBorder" Color="{StaticResource PrimaryMid}" />
+    <SolidColorBrush x:Key="ComboBoxHoverBackground" Color="{StaticResource Background}" />
 
-    <SolidColorBrush x:Key="ComboBoxDisabledForeground" Color="{StaticResource Disabled}"/>
-    <SolidColorBrush x:Key="ComboBoxDisabledBorder" Color="{StaticResource Disabled}"/>
-    <SolidColorBrush x:Key="ComboBoxDisabledBackground" Color="{StaticResource Background}"/>
+    <SolidColorBrush x:Key="ComboBoxClickForeground" Color="{StaticResource Active}" />
+    <SolidColorBrush x:Key="ComboBoxClickBorder" Color="{StaticResource Active}" />
+    <SolidColorBrush x:Key="ComboBoxClickBackground" Color="{StaticResource Background}" />
 
-    <!-- Comboboxitem brushes -->
-    <SolidColorBrush x:Key="ComboBoxItemNormalForeground" Color="{StaticResource Active}"/>
-    <SolidColorBrush x:Key="ComboBoxItemNormalBackground" Color="Transparent"/>
+    <SolidColorBrush x:Key="ComboBoxDisabledForeground" Color="{StaticResource Disabled}" />
+    <SolidColorBrush x:Key="ComboBoxDisabledBorder" Color="{StaticResource Disabled}" />
+    <SolidColorBrush x:Key="ComboBoxDisabledBackground" Color="{StaticResource Background}" />
 
-    <SolidColorBrush x:Key="ComboBoxItemHoverForeground" Color="{StaticResource HeaderTextEnabled}"/>
-    <SolidColorBrush x:Key="ComboBoxItemHoverBackground" Color="{StaticResource ItemHover}"/>
+    <!--  Comboboxitem brushes  -->
+    <SolidColorBrush x:Key="ComboBoxItemNormalForeground" Color="{StaticResource Active}" />
+    <SolidColorBrush x:Key="ComboBoxItemNormalBackground" Color="Transparent" />
 
-    <SolidColorBrush x:Key="ComboBoxItemClickForeground" Color="{StaticResource HeaderTextEnabled}"/>
-    <SolidColorBrush x:Key="ComboBoxItemClickBackground" Color="{StaticResource PrimaryMid}"/>
+    <SolidColorBrush x:Key="ComboBoxItemHoverForeground" Color="{StaticResource HeaderTextEnabled}" />
+    <SolidColorBrush x:Key="ComboBoxItemHoverBackground" Color="{StaticResource ItemHover}" />
 
-    <!-- ListBox brushes -->
-    <SolidColorBrush x:Key="ListBoxNormalBorder" Color="{StaticResource Inactive}"/>
-    <SolidColorBrush x:Key="ListBoxNormalBackground" Color="{StaticResource Background}"/>
+    <SolidColorBrush x:Key="ComboBoxItemClickForeground" Color="{StaticResource HeaderTextEnabled}" />
+    <SolidColorBrush x:Key="ComboBoxItemClickBackground" Color="{StaticResource PrimaryMid}" />
 
-    <SolidColorBrush x:Key="ListBoxDisabledBorder" Color="{StaticResource Disabled}"/>
-    <SolidColorBrush x:Key="ListBoxDisabledBackground" Color="{StaticResource Background}"/>
+    <!--  ListBox brushes  -->
+    <SolidColorBrush x:Key="ListBoxNormalBorder" Color="{StaticResource Inactive}" />
+    <SolidColorBrush x:Key="ListBoxNormalBackground" Color="{StaticResource Background}" />
 
-    <!-- ListBoxItem brushes -->
-    <SolidColorBrush x:Key="ListBoxItemNormalForeground" Color="{StaticResource Active}"/>
-    <SolidColorBrush x:Key="ListBoxItemNormalBackground" Color="Transparent"/>
+    <SolidColorBrush x:Key="ListBoxDisabledBorder" Color="{StaticResource Disabled}" />
+    <SolidColorBrush x:Key="ListBoxDisabledBackground" Color="{StaticResource Background}" />
 
-    <SolidColorBrush x:Key="ListBoxItemHoverForeground" Color="{StaticResource HeaderTextEnabled}"/>
-    <SolidColorBrush x:Key="ListBoxItemHoverBackground" Color="{StaticResource ItemHover}"/>
+    <!--  ListBoxItem brushes  -->
+    <SolidColorBrush x:Key="ListBoxItemNormalForeground" Color="{StaticResource Active}" />
+    <SolidColorBrush x:Key="ListBoxItemNormalBackground" Color="Transparent" />
 
-    <SolidColorBrush x:Key="ListBoxItemClickForeground" Color="{StaticResource HeaderTextEnabled}"/>
-    <SolidColorBrush x:Key="ListBoxItemClickBackground" Color="{StaticResource PrimaryMid}"/>
+    <SolidColorBrush x:Key="ListBoxItemHoverForeground" Color="{StaticResource HeaderTextEnabled}" />
+    <SolidColorBrush x:Key="ListBoxItemHoverBackground" Color="{StaticResource ItemHover}" />
 
-    <SolidColorBrush x:Key="ListBoxItemDisabledForeground" Color="{StaticResource Disabled}"/>
-    <SolidColorBrush x:Key="ListBoxItemDisabledBackground" Color="Transparent"/>
+    <SolidColorBrush x:Key="ListBoxItemClickForeground" Color="{StaticResource HeaderTextEnabled}" />
+    <SolidColorBrush x:Key="ListBoxItemClickBackground" Color="{StaticResource PrimaryMid}" />
 
-    <!-- ScrollBarThumb brushes -->
-    <SolidColorBrush x:Key="ScrollBarThumbNormalBackground" Color="{StaticResource ScrollBarButton}"/>
-    <SolidColorBrush x:Key="ScrollBarThumbHoverBackground" Color="{StaticResource PrimaryLight}"/>
-    <SolidColorBrush x:Key="ScrollBarThumbClickBackground" Color="{StaticResource PrimaryMid}"/>
+    <SolidColorBrush x:Key="ListBoxItemDisabledForeground" Color="{StaticResource Disabled}" />
+    <SolidColorBrush x:Key="ListBoxItemDisabledBackground" Color="Transparent" />
 
-    <!-- ScrollBarButton brushes -->
-    <SolidColorBrush x:Key="ScrollBarButtonNormalForeground" Color="{StaticResource Active}"/>
-    <SolidColorBrush x:Key="ScrollBarButtonNormalBackground" Color="{StaticResource ScrollBarButton}"/>
+    <!--  ScrollBarThumb brushes  -->
+    <SolidColorBrush x:Key="ScrollBarThumbNormalBackground" Color="{StaticResource ScrollBarButton}" />
+    <SolidColorBrush x:Key="ScrollBarThumbHoverBackground" Color="{StaticResource PrimaryLight}" />
+    <SolidColorBrush x:Key="ScrollBarThumbClickBackground" Color="{StaticResource PrimaryMid}" />
 
-    <SolidColorBrush x:Key="ScrollBarButtonHoverForeground" Color="{StaticResource HeaderTextEnabled}"/>
-    <SolidColorBrush x:Key="ScrollBarButtonHoverBackground" Color="{StaticResource PrimaryLight}"/>
+    <!--  ScrollBarButton brushes  -->
+    <SolidColorBrush x:Key="ScrollBarButtonNormalForeground" Color="{StaticResource Active}" />
+    <SolidColorBrush x:Key="ScrollBarButtonNormalBackground" Color="{StaticResource ScrollBarButton}" />
 
-    <SolidColorBrush x:Key="ScrollBarButtonClickForeground" Color="{StaticResource HeaderTextEnabled}"/>
-    <SolidColorBrush x:Key="ScrollBarButtonClickBackground" Color="{StaticResource PrimaryMid}"/>
+    <SolidColorBrush x:Key="ScrollBarButtonHoverForeground" Color="{StaticResource HeaderTextEnabled}" />
+    <SolidColorBrush x:Key="ScrollBarButtonHoverBackground" Color="{StaticResource PrimaryLight}" />
 
-    <!-- ScrollBar brushes -->
-    <SolidColorBrush x:Key="ScrollbarNormalBackground" Color="#FF2A2A2A"/>
+    <SolidColorBrush x:Key="ScrollBarButtonClickForeground" Color="{StaticResource HeaderTextEnabled}" />
+    <SolidColorBrush x:Key="ScrollBarButtonClickBackground" Color="{StaticResource PrimaryMid}" />
 
-    <!-- DataGrid -->
+    <!--  ScrollBar brushes  -->
+    <SolidColorBrush x:Key="ScrollbarNormalBackground" Color="#FF2A2A2A" />
+
+    <!--  DataGrid  -->
     <SolidColorBrush x:Key="DataGridBackgroundBrushA1" Color="#FF252526" />
     <SolidColorBrush x:Key="DataGridBackgroundBrushA2" Color="#FF252526" />
     <SolidColorBrush x:Key="DataGridHeaderBackgroundBrush" Color="#FF2d2d30" />
@@ -166,7 +166,7 @@
     <SolidColorBrush x:Key="DataGridHeaderSortedBackgroundBrush" Color="{StaticResource PrimaryMid}" />
     <SolidColorBrush x:Key="DataGridHeaderTextBrushDisabled" Color="{StaticResource Disabled}" />
 
-    <!-- DataGridRow -->
+    <!--  DataGridRow  -->
     <SolidColorBrush x:Key="DataGridRowNormalBackground" Color="#FF252526" />
     <SolidColorBrush x:Key="DataGridRowNormalForeground" Color="{StaticResource Active}" />
 
@@ -177,19 +177,19 @@
     <SolidColorBrush x:Key="DataGridRowClickForeground" Color="{StaticResource HeaderTextEnabled}" />
 
 
-    <!-- Slider brushes -->
-    <SolidColorBrush x:Key="SliderTrackNormal" Color="{StaticResource Inactive}"/>
-    <SolidColorBrush x:Key="SliderTrackDisabled" Color="{StaticResource Disabled}"/>
+    <!--  Slider brushes  -->
+    <SolidColorBrush x:Key="SliderTrackNormal" Color="{StaticResource Inactive}" />
+    <SolidColorBrush x:Key="SliderTrackDisabled" Color="{StaticResource Disabled}" />
 
-    <SolidColorBrush x:Key="SliderKnobNormal" Color="{StaticResource Active}"/>
-    <SolidColorBrush x:Key="SliderKnobHover" Color="{StaticResource PrimaryLight}"/>
-    <SolidColorBrush x:Key="SliderKnobClick" Color="{StaticResource PrimaryMid}"/>
-    <SolidColorBrush x:Key="SliderKnobDisabled" Color="{StaticResource Disabled}"/>
+    <SolidColorBrush x:Key="SliderKnobNormal" Color="{StaticResource Active}" />
+    <SolidColorBrush x:Key="SliderKnobHover" Color="{StaticResource PrimaryLight}" />
+    <SolidColorBrush x:Key="SliderKnobClick" Color="{StaticResource PrimaryMid}" />
+    <SolidColorBrush x:Key="SliderKnobDisabled" Color="{StaticResource Disabled}" />
 
-    <!-- Groupbox brushes -->
-    <SolidColorBrush x:Key="GroupBoxText" Color="{StaticResource HeaderTextEnabled}"/>
-    <SolidColorBrush x:Key="GroupBoxBorder" Color="{StaticResource PrimaryMid}"/>
-    <SolidColorBrush x:Key="GroupBoxBackground" Color="{StaticResource PrimaryMid}"/>
+    <!--  Groupbox brushes  -->
+    <SolidColorBrush x:Key="GroupBoxText" Color="{StaticResource HeaderTextEnabled}" />
+    <SolidColorBrush x:Key="GroupBoxBorder" Color="{StaticResource PrimaryMid}" />
+    <SolidColorBrush x:Key="GroupBoxBackground" Color="{StaticResource PrimaryMid}" />
     <SolidColorBrush x:Key="GroupBoxContentBackground" Color="#FF2d2d30" />
 
 

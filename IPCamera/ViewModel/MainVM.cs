@@ -27,12 +27,21 @@ namespace IPCamera.ViewModel
         private ViewportMode viewportMode;
 
         public Config Config => gs.Config;
+        private string motionDetectionHotspots;
+
+        private double motionDetectionHotspotsPercentage;
 
         public WriteableBitmap LiveImage
         {
             get => liveImage;
             set => Set(ref liveImage, value);
         }
+        public double MotionDetectionHotspotsPercentage
+        {
+            get => motionDetectionHotspotsPercentage;
+            set => Set(ref motionDetectionHotspotsPercentage, value);
+        }
+
         public ViewportMode ViewportMode
         {
             get => viewportMode;
@@ -40,7 +49,7 @@ namespace IPCamera.ViewModel
             {
                 Set(ref viewportMode, value);
 
-                switch(viewportMode)
+                switch (viewportMode)
                 {
                     case ViewportMode.MotionDetectionDiff:
                         gs.MotionDetector.ResultMode = Model.MotionDetection.ResultMode.Diff;
@@ -53,7 +62,13 @@ namespace IPCamera.ViewModel
             }
         }
 
-        
+        public string MotionDetectionHotspots
+        {
+            get => motionDetectionHotspots;
+            set => Set(ref motionDetectionHotspots, value);
+        }
+
+
 
         /// <summary>
         /// Get a dictionary of <see cref="Model.ViewportMode"/>s
@@ -82,24 +97,29 @@ namespace IPCamera.ViewModel
             gs.MotionDetector.OnMotionDetectionResult += MotionDetector_OnMotionDetectionResult;
             StartRecordCommand = new RelayCommand(gs.Recorder.Start);
             StopRecordCommand = new RelayCommand(gs.Recorder.Stop);
-            
+
         }
 
-    
+
 
         /// <summary>
         /// Recieve result from motion detection
         /// </summary>
         private void MotionDetector_OnMotionDetectionResult(object sender, Model.MotionDetection.MotionDetectionResult e)
         {
-            if (ViewportMode == ViewportMode.MotionDetectionDiff ||
-                viewportMode == ViewportMode.MotionDetectionThreshold)
+
+            App.Current.Dispatcher.Invoke(() =>
             {
-                App.Current.Dispatcher.Invoke(() =>
+                if (ViewportMode == ViewportMode.MotionDetectionDiff ||
+                    viewportMode == ViewportMode.MotionDetectionThreshold)
                 {
                     ShowFrame(e.Bitmap);
-                });
-            }
+                }
+
+                MotionDetectionHotspotsPercentage = e.HotspotPercentage;
+                MotionDetectionHotspots = $"{e.HotspotCount} ({e.HotspotPercentage:0.0}%)";
+            });
+
         }
 
 
