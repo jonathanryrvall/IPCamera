@@ -11,15 +11,36 @@
         Height="675"
         MinWidth="16"
         MinHeight="16"
-        DataContext="{Binding MainWindowViewModel, Source={StaticResource ViewModelLocator}}"
+        DataContext="{Binding MainVM, Source={StaticResource ViewModelLocator}}"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
 
     <Grid>
-        <Image x:Name="VideoImage"
-               x:FieldModifier="private"
+
+        <Image Width="640"
+               Height="360"
+               Margin="72,74,0,0"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Top"
                SnapsToDevicePixels="True"
-               Stretch="None"
+               Source="{Binding LiveImage}"
+               Stretch="Fill"
                UseLayoutRounding="True" />
+        <Button Width="146"
+                Height="60"
+                Margin="821,107,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Command="{Binding StartRecordCommand}"
+                Content="Start record"
+                FontSize="20" />
+        <Button Width="146"
+                Height="60"
+                Margin="821,172,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Command="{Binding StopRecordCommand}"
+                Content="Stop record"
+                FontSize="20" />
     </Grid>
 </Window>

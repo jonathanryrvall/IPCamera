@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{40493D0C-21B8-4357-AE75-D7637B3FC223}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>SimpleRtspPlayer</RootNamespace>
-    <AssemblyName>SimpleRtspPlayer</AssemblyName>
+    <RootNamespace>IPCamera</RootNamespace>
+    <AssemblyName>IPCamera</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -120,13 +120,21 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="Model\FFmpegVideoPInvoke.cs" />
-    <Compile Include="Model\ImageFrame.cs" />
-    <Compile Include="Model\VideoSource.cs" />
+    </Page>
+    <Compile Include="Model\Config\Config.cs" />
+    <Compile Include="Model\Config\ConfigSaverLoader.cs" />
+    <Compile Include="Model\FilePaths.cs" />
+    <Compile Include="Model\GlobalStates.cs" />
+    <Compile Include="Model\MotionDetection\MotionDetectionResult.cs" />
+    <Compile Include="Model\MotionDetection\MotionDetector.cs" />
+    <Compile Include="Model\Video\FFmpegVideoPInvoke.cs" />
+    <Compile Include="Model\Video\ImageFrame.cs" />
+    <Compile Include="Model\Recording\ImageRecorder.cs" />
+    <Compile Include="Model\Recording\IRecorder.cs" />
+    <Compile Include="Model\Video\VideoSource.cs" />
     <Page Include="View\MainV.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

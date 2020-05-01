@@ -1,5 +1,7 @@
 ﻿using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
+using IPCamera.Model;
+using IPCamera.Model.Config;
 using System;
 
 
@@ -16,6 +18,8 @@ namespace IPCamera.ViewModel
         }
 
         public MainVM MainVM => SimpleIoc.Default.GetInstance<MainVM>();
+
+
 
     }
 }

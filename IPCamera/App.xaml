@@ -4,8 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:IPCamera.ViewModel"
-             d1p1:Ignorable="d"
-             StartupUri="/View/MainV.xaml">
+             d1p1:Ignorable="d">
     <Application.Resources>
         <vm:ViewModelLocator x:Key="ViewModelLocator" />
     </Application.Resources>

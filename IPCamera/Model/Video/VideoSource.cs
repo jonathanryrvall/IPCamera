@@ -27,27 +27,29 @@ namespace IPCamera.Model
         private int height;
         private FFmpegPixelFormat PixelFormat;
 
-      //  private WriteableBitmap bitmap;
-
         public event EventHandler<ImageFrame> DecodedFrameReceived;
         public event EventHandler<string> ConnectionStatusChanged;
 
         private IntPtr bitmap;
         private int stride;
-        byte[] outData;
+     
+    
 
-        /// <summary>
-        /// Initialize a new instance of <see cref="VideoSource"/> from some connection parameters
-        /// </summary>
-        public VideoSource(ConnectionParameters connectionParameters)
+        public VideoSource (Config.Config config)
         {
-            this.connectionParameters = connectionParameters;
+            var deviceUri = new Uri(config.ConnectionStrinng, UriKind.Absolute);
+            connectionParameters = new ConnectionParameters(deviceUri);
+
+            connectionParameters.RtpTransport = RtpTransportProtocol.UDP;
+            connectionParameters.CancelTimeout = TimeSpan.FromSeconds(1);
+
+            Start();
         }
 
         /// <summary>
         /// Start connection to camera
         /// </summary>
-        public void Start()
+        private void Start()
         {
             cancellationTokenSource = new CancellationTokenSource();
 
@@ -152,7 +154,7 @@ namespace IPCamera.Model
                 FFmpegVideoPInvoke.CreateVideoDecoder(codecId, out decoderHandle);
             }
 
-            // Recode
+            // Decode
             if (TryDecode(rawVideoFrame))
             {
                 
@@ -160,21 +162,12 @@ namespace IPCamera.Model
                 {
                     bitmap = Marshal.AllocHGlobal(width * height * 4);
                     stride = width * 4;
-                    outData = new byte[width * height * 4];
                 }
 
 
-                //bitmap.Lock();
                 TransformTo(bitmap, stride);
-                //     bitmap.AddDirtyRect(new Int32Rect(0, 0, Width, Height));
-                //     bitmap.Unlock();
-
-                //  var stride = Width * ((bitmap.Format.BitsPerPixel + 7) / 8);
-
-                //    var bitmapData = new byte[Height * stride];
-
-                //       bitmap.CopyPixels(bitmapData, stride, 0);
-                
+             
+                var outData = new byte[width * height * 4];
                 Marshal.Copy(bitmap, outData, 0, outData.Length);
 
                 DecodedFrameReceived?.Invoke(this, new ImageFrame() { Data = outData, Width = width, Height = height });
