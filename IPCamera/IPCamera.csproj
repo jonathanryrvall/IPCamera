@@ -125,6 +125,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\FFmpegVideoPInvoke.cs" />
+    <Compile Include="Model\ImageFrame.cs" />
     <Compile Include="Model\VideoSource.cs" />
     <Page Include="View\MainV.xaml">
       <Generator>MSBuild:Compile</Generator>

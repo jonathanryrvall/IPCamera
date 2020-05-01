@@ -14,17 +14,13 @@ namespace IPCamera.View
     {
         public string DeviceAddress  = "rtsp://admin:admins@192.168.1.101/user=admin_password=_channel=1_stream=0.sdp";
 
-  //      private WriteableBitmap bitmap;
         private VideoSource videoSource;
-
+        private WriteableBitmap wbm;
 
         public MainV()
         {
             InitializeComponent();
             
-          
-
-         //   VideoImage.Source = bitmap;
            
             // Setup camera
             var deviceUri = new Uri(DeviceAddress, UriKind.Absolute);
@@ -40,42 +36,22 @@ namespace IPCamera.View
 
         }
 
-        WriteableBitmap wbm;
+       
 
 
-
-        //public static BitmapSource FromArray(byte[] data, int w, int h, int ch)
-        //{
-        //    PixelFormat format = PixelFormats.Default;
-
-        //    if (ch == 1) format = PixelFormats.Gray8; //grey scale image 0-255
-        //    if (ch == 3) format = PixelFormats.Bgr24; //RGB
-        //    if (ch == 4) format = PixelFormats.Bgr32; //RGB + alpha
-
-
-        //     wbm.WritePixels(new Int32Rect(0, 0, w, h), data, ch * w, 0);
-
-        //    return wbm;
-        //}
-
-
-        private void OnFrameReceived(object sender, byte[] e)
+        private void OnFrameReceived(object sender, ImageFrame frame)
         {
             App.Current.Dispatcher.Invoke(() =>
             {
                 if (wbm == null)
                 {
-                    wbm = new WriteableBitmap(1280, 720, 96, 96, PixelFormats.Bgr32, null);
+                    wbm = new WriteableBitmap(frame.Width, frame.Height, 96, 96, PixelFormats.Bgr32, null);
                     VideoImage.Source = wbm;
                 }
 
-                wbm.WritePixels(new Int32Rect(0, 0, 1280, 720), e, 1280 * 4, 0);
+                wbm.WritePixels(new Int32Rect(0, 0, frame.Width, frame.Height), frame.Data, frame.Width * 4, 0);
 
-               
-               // var clone = e.Clone();
-
-                //VideoImage.Source = e.Clone();
-
+       
 
             });
         }

@@ -23,13 +23,13 @@ namespace IPCamera.Model
         private Task workTask = Task.CompletedTask;
         private CancellationTokenSource cancellationTokenSource;
 
-        public int Width;
-        public int Height;
-        public FFmpegPixelFormat PixelFormat;
+        private int width;
+        private int height;
+        private FFmpegPixelFormat PixelFormat;
 
       //  private WriteableBitmap bitmap;
 
-        public event EventHandler<byte[]> DecodedFrameReceived;
+        public event EventHandler<ImageFrame> DecodedFrameReceived;
         public event EventHandler<string> ConnectionStatusChanged;
 
         private IntPtr bitmap;
@@ -158,9 +158,9 @@ namespace IPCamera.Model
                 
                 if (bitmap == IntPtr.Zero)
                 {
-                    bitmap = Marshal.AllocHGlobal(Width * Height * 4);
-                    stride = Width * 4;
-                    outData = new byte[Width * Height * 4];
+                    bitmap = Marshal.AllocHGlobal(width * height * 4);
+                    stride = width * 4;
+                    outData = new byte[width * height * 4];
                 }
 
 
@@ -177,7 +177,7 @@ namespace IPCamera.Model
                 
                 Marshal.Copy(bitmap, outData, 0, outData.Length);
 
-                DecodedFrameReceived?.Invoke(this, outData);
+                DecodedFrameReceived?.Invoke(this, new ImageFrame() { Data = outData, Width = width, Height = height });
             }
         }
 
@@ -233,8 +233,8 @@ namespace IPCamera.Model
                 if (resultCode != 0)
                     return false;
 
-                Width = width;
-                Height = height;
+                this.width = width;
+                this.height = height;
                 PixelFormat = pixelFormat;
 
 
@@ -260,8 +260,8 @@ namespace IPCamera.Model
         {
             if (scalerHandle == IntPtr.Zero)
             {
-                FFmpegVideoPInvoke.CreateVideoScaler(0, 0, Width, Height, PixelFormat,
-               Width, Height, FFmpegPixelFormat.BGRA, FFmpegScalingQuality.FastBilinear, out scalerHandle);
+                FFmpegVideoPInvoke.CreateVideoScaler(0, 0, width, height, PixelFormat,
+               width, height, FFmpegPixelFormat.BGRA, FFmpegScalingQuality.FastBilinear, out scalerHandle);
             }
 
             FFmpegVideoPInvoke.ScaleDecodedVideoFrame(decoderHandle, scalerHandle, bitmap, stride);
