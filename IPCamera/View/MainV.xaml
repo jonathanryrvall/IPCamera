@@ -129,6 +129,14 @@
                     <Label HorizontalAlignment="Left" Content="Hotspots" />
                     <Label HorizontalAlignment="Right" Content="{Binding MotionDetectionHotspots, FallbackValue='HOTSPOTS'}" />
                 </Grid>
+                <Grid Margin="0,10,0,0">
+                    <Label HorizontalAlignment="Left" Content="Active blocks" />
+                    <Label HorizontalAlignment="Right" Content="{Binding ActiveBlocks, FallbackValue='BLOCKS'}" />
+                </Grid>
+                <Grid Margin="0,10,0,0">
+                    <Label HorizontalAlignment="Left" Content="Trigger" />
+                    <Label HorizontalAlignment="Right" Content="{Binding MotionTriggered, FallbackValue='MOTION'}" />
+                </Grid>
             </StackPanel>
 
             <StackPanel Margin="0,25,0,0">

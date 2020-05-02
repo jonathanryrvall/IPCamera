@@ -31,7 +31,8 @@ namespace IPCamera.ViewModel
         private ImageFrame lastFrame;
         public Config Config => gs.Config;
         private string motionDetectionHotspots;
-
+        private int activeBlocks;
+        private bool motionTriggered;
         private double motionDetectionHotspotsPercentage;
 
         public WriteableBitmap LiveImage
@@ -70,6 +71,9 @@ namespace IPCamera.ViewModel
                     case ViewportMode.Blocks:
                         gs.MotionDetector.ResultMode = Model.MotionDetection.ResultMode.Blocks;
                         break;
+                    case ViewportMode.BlocksCombined:
+                        gs.MotionDetector.ResultMode = Model.MotionDetection.ResultMode.BlocksCombined;
+                        break;
                     case ViewportMode.Reference:
                         gs.MotionDetector.ResultMode = Model.MotionDetection.ResultMode.Reference;
                         break;
@@ -84,6 +88,17 @@ namespace IPCamera.ViewModel
             set => Set(ref motionDetectionHotspots, value);
         }
 
+
+        public int ActiveBlocks
+        {
+            get => activeBlocks;
+            set => Set(ref activeBlocks, value);
+        }
+        public bool MotionTriggered
+        {
+            get => motionTriggered;
+            set => Set(ref motionTriggered, value);
+        }
 
 
         /// <summary>
@@ -130,7 +145,7 @@ namespace IPCamera.ViewModel
             gs.VideoSource.DecodedFrameReceived += OnFrameReceived;
             gs.MotionDetector.OnMotionDetectionResult += MotionDetector_OnMotionDetectionResult;
             StartRecordCommand = new RelayCommand(gs.Recorder.Start);
-       //     StopRecordCommand = new RelayCommand(gs.Recorder.Stop);
+            //     StopRecordCommand = new RelayCommand(gs.Recorder.Stop);
             SnapshotCommand = new RelayCommand(Snapshot);
         }
 
@@ -147,13 +162,15 @@ namespace IPCamera.ViewModel
                 if (ViewportMode == ViewportMode.MotionDetectionDiff ||
                     ViewportMode == ViewportMode.Reference ||
                     ViewportMode == ViewportMode.Blocks ||
+                    ViewportMode == ViewportMode.BlocksCombined ||
                     ViewportMode == ViewportMode.CombinedThreshold ||
                     viewportMode == ViewportMode.MotionDetectionThreshold)
                 {
                     ShowFrame(e.ResultFrame);
                 }
 
-
+                MotionTriggered = e.Motion;
+                ActiveBlocks = e.ActiveBlocksCount;
                 MotionDetectionHotspotsPercentage = e.HotspotPercentage;
                 MotionDetectionHotspots = $"{e.HotspotCount} ({e.HotspotPercentage:0.00}%)";
             });
@@ -201,12 +218,12 @@ namespace IPCamera.ViewModel
             FrameSaver.Save(lastFrame, FrameSaver.GetTimestampFilename());
         }
 
-       
+
         private System.Windows.Point lastMousePos;
         private float scale = 1f;
         private double xOffset = 0;
         private double yOffset = 0;
-      
+
 
         public Thickness ViewerOffset
         {
@@ -286,7 +303,7 @@ namespace IPCamera.ViewModel
             RaisePropertyChanged(nameof(ViewerWidth));
         }
 
-       
+
 
     }
 }

@@ -202,7 +202,7 @@ namespace IPCamera.Model.MotionDetection
                     int y = (p - x) / newFrame.Width;
                     int bX = x / blockSize;
                     int bY = y / blockSize;
-                    int bI = (bY * (x / blockSize)) + bX;
+                    int bI = (bY * (newFrame.Width / blockSize)) + bX;
                     blocks[bI]++;
                 }
 
@@ -213,26 +213,42 @@ namespace IPCamera.Model.MotionDetection
                 for (int p = 0; p < pixelCount; p++)
                 {
 
+                    int x = p % newFrame.Width;
+                    int y = (p - x) / newFrame.Width;
+                    int bX = x / blockSize;
+                    int bY = y / blockSize;
+                    int bI = (bY * (newFrame.Width / blockSize)) + bX;
 
-                 
+                    resultFrame.Data[p * 4 + 0] = 0;
+                    resultFrame.Data[p * 4 + 1] = 0;
+                    resultFrame.Data[p * 4 + 2] = blocks[bI] > blockThreshold ? (byte)255 : (byte)0;
+
+                }
+            }
+
+            if (ResultMode == ResultMode.BlocksCombined)
+            {
+                for (int p = 0; p < pixelCount; p++)
+                {
+                    byte rNew = newFrame.Data[p * 4 + 2];
+                    byte v = (byte)(rNew / 2);
 
                     int x = p % newFrame.Width;
                     int y = (p - x) / newFrame.Width;
                     int bX = x / blockSize;
                     int bY = y / blockSize;
-                    int bI = (bY * (x / blockSize)) + bX;
+                    int bI = (bY * (newFrame.Width / blockSize)) + bX;
 
-                    resultFrame.Data[p * 4 + 0] = 0;
-                    resultFrame.Data[p * 4 + 1] = 0;
-                    resultFrame.Data[p * 4 + 2] = blocks[bI] > 100 ? (byte)255 : (byte)0;
-
-
-
-
-
+                    resultFrame.Data[p * 4 + 0] = v;
+                    resultFrame.Data[p * 4 + 1] = v;
+                    resultFrame.Data[p * 4 + 2] = blocks[bI] > blockThreshold ? (byte)255 : v;
 
                 }
             }
+
+            // Count blocks
+            int activeBlockCount = blocks.Count(b => b > blockThreshold);
+
             MotionDetectionResult result = new MotionDetectionResult();
             if (ResultMode == ResultMode.Reference)
             {
@@ -244,8 +260,9 @@ namespace IPCamera.Model.MotionDetection
             }
 
             result.HotspotCount = hotSpotCount;
+            result.ActiveBlocksCount = activeBlockCount;
             result.HotspotPercentage = ((double)hotSpotCount / (double)pixelCount) * 100;
-            result.Motion = result.HotspotPercentage > maxHotspots;
+            result.Motion = result.ActiveBlocksCount >= minActiveBlocks;
             result.ImageFrame = newFrame;
             return result;
         }
