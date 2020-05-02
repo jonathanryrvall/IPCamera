@@ -21,14 +21,37 @@ namespace IPCamera.Model.Config
         private byte remodelStrength = 10;
         private int remodelInterval = 500;
         private int frameRate = 8;
+        private int blockSize = 40;
+        private int blockThreshold = 100;
+        private int minActiveBlocks = 2;
 
         private Schedule schedule = new Schedule()
         {
             InactivePeriods = new List<InactivePeriod>()
             {
                 new InactivePeriod()
+                {
+                    StartHour = 8,
+                    EndHour = 19
+                }
             }
         };
+
+        public int BlockSize
+        {
+            get => blockSize;
+            set => Set(ref blockSize, value);
+        }
+        public int BlockThreshold
+        {
+            get => blockThreshold;
+            set => Set(ref blockThreshold, value);
+        }
+        public int MinActiveBlocks
+        {
+            get => minActiveBlocks;
+            set => Set(ref minActiveBlocks, value);
+        }
 
 
         public string ConnectionString
@@ -92,7 +115,7 @@ namespace IPCamera.Model.Config
 
         public void AddMissing()
         {
-            
+
         }
     }
 }

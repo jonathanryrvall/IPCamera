@@ -12,6 +12,7 @@ namespace IPCamera.Model
         MotionDetectionDiff,
         MotionDetectionThreshold,
         CombinedThreshold,
-        Reference
+        Reference,
+        Blocks
     }
 }

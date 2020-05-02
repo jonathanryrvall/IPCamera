@@ -102,6 +102,30 @@
                 </Grid>
 
                 <Grid Margin="0,10,0,0">
+                    <Label Content="Block size" />
+                    <TextBox Width="100"
+                             HorizontalAlignment="Right"
+                             Text="{Binding Config.BlockSize}" />
+
+                </Grid>
+
+                <Grid Margin="0,10,0,0">
+                    <Label Content="Block threshold" />
+                    <TextBox Width="100"
+                             HorizontalAlignment="Right"
+                             Text="{Binding Config.BlockThreshold}" />
+
+                </Grid>
+
+                <Grid Margin="0,10,0,0">
+                    <Label Content="Min active blocks" />
+                    <TextBox Width="100"
+                             HorizontalAlignment="Right"
+                             Text="{Binding Config.MinActiveBlocks}" />
+
+                </Grid>
+
+                <Grid Margin="0,10,0,0">
                     <Label HorizontalAlignment="Left" Content="Hotspots" />
                     <Label HorizontalAlignment="Right" Content="{Binding MotionDetectionHotspots, FallbackValue='HOTSPOTS'}" />
                 </Grid>

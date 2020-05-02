@@ -23,6 +23,10 @@ namespace IPCamera.Model.MotionDetection
         private DateTime LastRemodel;
         private TimeSpan remodelInterval;
         private byte remodelStrength;
+        private int minActiveBlocks;
+        private int blockThreshold;
+        private int blockSize;
+
 
         public MotionDetector(VideoSource videoSource,
                               Config.Config config)
@@ -42,6 +46,9 @@ namespace IPCamera.Model.MotionDetection
             maxHotspots = config.MaxHotspots;
             remodelInterval = TimeSpan.FromMilliseconds(config.RemodelInterval);
             remodelStrength = config.RemodelStrength;
+            blockSize = config.BlockSize;
+            blockThreshold = config.BlockThreshold;
+            minActiveBlocks = config.MinActiveBlocks;
         }
 
         /// <summary>
@@ -78,6 +85,9 @@ namespace IPCamera.Model.MotionDetection
             int pixelCount = newFrame.Width * newFrame.Height;
             int hotSpotCount = 0;
 
+            int blockCount = (newFrame.Width / blockSize) * (newFrame.Height / blockSize);
+            int[] blocks = new int[blockCount];
+
             // Init the result frame first time if it has not yet been initialized
             if (resultFrame == null)
             {
@@ -98,10 +108,12 @@ namespace IPCamera.Model.MotionDetection
             {
                 LastRemodel = DateTime.Now;
             }
-         
+
 
             for (int p = 0; p < pixelCount; p++)
             {
+               
+
                 byte rNew = newFrame.Data[p * 4 + 2];
                 byte gNew = newFrame.Data[p * 4 + 1];
                 byte bNew = newFrame.Data[p * 4 + 0];
@@ -152,10 +164,10 @@ namespace IPCamera.Model.MotionDetection
                         referenceFrame.Data[p * 4 + 0] -= remodelB;
                     }
 
-                 
+
 
                 }
-               
+
 
 
 
@@ -185,10 +197,42 @@ namespace IPCamera.Model.MotionDetection
                 if (isHotspot)
                 {
                     hotSpotCount++;
+
+                    int x = p % newFrame.Width;
+                    int y = (p - x) / newFrame.Width;
+                    int bX = x / blockSize;
+                    int bY = y / blockSize;
+                    int bI = (bY * (x / blockSize)) + bX;
+                    blocks[bI]++;
                 }
 
             }
 
+            if (ResultMode == ResultMode.Blocks)
+            {
+                for (int p = 0; p < pixelCount; p++)
+                {
+
+
+                 
+
+                    int x = p % newFrame.Width;
+                    int y = (p - x) / newFrame.Width;
+                    int bX = x / blockSize;
+                    int bY = y / blockSize;
+                    int bI = (bY * (x / blockSize)) + bX;
+
+                    resultFrame.Data[p * 4 + 0] = 0;
+                    resultFrame.Data[p * 4 + 1] = 0;
+                    resultFrame.Data[p * 4 + 2] = blocks[bI] > 100 ? (byte)255 : (byte)0;
+
+
+
+
+
+
+                }
+            }
             MotionDetectionResult result = new MotionDetectionResult();
             if (ResultMode == ResultMode.Reference)
             {

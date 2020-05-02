@@ -67,6 +67,9 @@ namespace IPCamera.ViewModel
                     case ViewportMode.CombinedThreshold:
                         gs.MotionDetector.ResultMode = Model.MotionDetection.ResultMode.Combined;
                         break;
+                    case ViewportMode.Blocks:
+                        gs.MotionDetector.ResultMode = Model.MotionDetection.ResultMode.Blocks;
+                        break;
                     case ViewportMode.Reference:
                         gs.MotionDetector.ResultMode = Model.MotionDetection.ResultMode.Reference;
                         break;
@@ -143,6 +146,7 @@ namespace IPCamera.ViewModel
             {
                 if (ViewportMode == ViewportMode.MotionDetectionDiff ||
                     ViewportMode == ViewportMode.Reference ||
+                    ViewportMode == ViewportMode.Blocks ||
                     ViewportMode == ViewportMode.CombinedThreshold ||
                     viewportMode == ViewportMode.MotionDetectionThreshold)
                 {
