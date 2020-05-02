@@ -20,7 +20,15 @@ namespace IPCamera.Model.Config
         private Bitrate bitrate = Bitrate.K4000;
         private byte remodelStrength = 10;
         private int remodelInterval = 500;
-        private Schedule schedule;
+        private int frameRate = 8;
+
+        private Schedule schedule = new Schedule()
+        {
+            InactivePeriods = new List<InactivePeriod>()
+            {
+                new InactivePeriod()
+            }
+        };
 
 
         public string ConnectionString
@@ -46,6 +54,13 @@ namespace IPCamera.Model.Config
             get => remodelInterval;
             set => Set(ref remodelInterval, value);
         }
+
+        public int FrameRate
+        {
+            get => frameRate;
+            set => Set(ref frameRate, value);
+        }
+
 
         public byte RemodelStrength
         {

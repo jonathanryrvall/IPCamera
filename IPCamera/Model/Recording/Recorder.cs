@@ -15,7 +15,8 @@ namespace IPCamera.Model.Recording
     public class Recorder
     {
         public bool IsRecording;
-        private string path;
+        private int frameRate;
+
         private DateTime ShutdownTime;
         private VideoFileWriter writer;
         private TimeSpan recordTime;
@@ -56,13 +57,13 @@ namespace IPCamera.Model.Recording
         /// Setup recorder with a video source and a path to record to
         /// </summary>
         public Recorder(VideoSource videoSource,
-                          string path,
+                          int frameRate,
                           int preRecord,
                           int recordTime,
                           Bitrate bitrate)
         {
             videoSource.DecodedFrameReceived += VideoSource_DecodedFrameReceived;
-            this.path = path;
+            this.frameRate = frameRate;
             this.preRecord = preRecord;
             this.recordTime = TimeSpan.FromSeconds(recordTime);
             this.bitrate = bitrate;
@@ -132,7 +133,7 @@ namespace IPCamera.Model.Recording
         private void OpenRecording()
         {
             writer = new VideoFileWriter();
-            writer.Open(GetFileName(), width, height, 8, VideoCodec.MPEG4, (int)bitrate);
+            writer.Open(GetFileName(), width, height, frameRate, VideoCodec.MPEG4, (int)bitrate);
         }
 
         /// <summary>

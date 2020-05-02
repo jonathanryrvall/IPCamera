@@ -22,13 +22,14 @@ namespace IPCamera.Model.Scheduling
             foreach (var p in schedule.InactivePeriods)
             {
                 DateTime start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, p.StartHour, p.StartMinute, 0);
-                DateTime end = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, p.StartHour, p.StartMinute, 0);
+                DateTime end = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, p.EndHour, p.EndMinute, 0);
 
                 if (DateTime.Now > start && DateTime.Now < end)
                 {
                     return false;
                 }
             }
+
             return true;
         }
     }
