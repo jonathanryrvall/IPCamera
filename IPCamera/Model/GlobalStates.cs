@@ -48,7 +48,7 @@ namespace IPCamera.Model
         {
             if (e.Motion)
             {
-                FrameSaver.Save(e.ImageFrame, FrameSaver.GetTimestampFilename());
+                Recorder.Start();
             }
         }
     }

@@ -127,6 +127,7 @@ namespace IPCamera.Model
         /// </summary>
         private void RtspClientOnFrameReceived(object sender, RawFrame rawFrame)
         {
+            
             if (rawFrame is RawVideoFrame)
             {
                 ProcessRawFrame(rawFrame as RawVideoFrame);

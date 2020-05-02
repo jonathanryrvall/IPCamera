@@ -137,7 +137,6 @@
     <Compile Include="Model\Recording\Bitrate.cs" />
     <Compile Include="Model\Recording\FrameSaver.cs" />
     <Compile Include="Model\Recording\Recorder.cs" />
-    <Compile Include="Model\Recording\VideoRecorder.cs" />
     <Compile Include="View\ViewportV.xaml.cs">
       <DependentUpon>ViewportV.xaml</DependentUpon>
     </Compile>
@@ -153,7 +152,6 @@
     <Compile Include="Model\MotionDetection\MotionDetector.cs" />
     <Compile Include="Model\Video\FFmpegVideoPInvoke.cs" />
     <Compile Include="Model\Video\ImageFrame.cs" />
-    <Compile Include="Model\Recording\ImageRecorder.cs" />
     <Compile Include="Model\Video\VideoSource.cs" />
     <Page Include="Skin\DarkBlue.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -9,18 +9,23 @@ using System.Timers;
 
 namespace IPCamera.Model.Recording
 {
+    /// <summary>
+    /// Records frames to a MP4 file
+    /// </summary>
     public class Recorder
     {
-        protected string path;
-        protected DateTime ShutdownTime;
-        private VideoFileWriter writer;
         public bool IsRecording;
+        private string path;
+        private DateTime ShutdownTime;
+        private VideoFileWriter writer;
         private TimeSpan recordTime;
         private List<ImageFrame> cachedFrames = new List<ImageFrame>();
         private int preRecord;
-        protected int width;
-        protected int height;
+        private int width;
+        private int height;
+        private Bitrate bitrate;
 
+        private Bitmap saveBitmap;
 
         /// <summary>
         /// Start recording by setting the shutdown time in the future
@@ -50,15 +55,17 @@ namespace IPCamera.Model.Recording
         /// <summary>
         /// Setup recorder with a video source and a path to record to
         /// </summary>
-        public void Setup(VideoSource videoSource, 
+        public Recorder(VideoSource videoSource,
                           string path,
                           int preRecord,
-                          int recordTime)
+                          int recordTime,
+                          Bitrate bitrate)
         {
             videoSource.DecodedFrameReceived += VideoSource_DecodedFrameReceived;
             this.path = path;
             this.preRecord = preRecord;
             this.recordTime = TimeSpan.FromSeconds(recordTime);
+            this.bitrate = bitrate;
         }
 
 
@@ -70,7 +77,7 @@ namespace IPCamera.Model.Recording
             width = frame.Width;
             height = frame.Height;
 
-           
+
 
             // Recording > Save frames to file
             if (IsRecording)
@@ -78,7 +85,7 @@ namespace IPCamera.Model.Recording
                 // Save any cached frames
                 if (cachedFrames.Count > 0)
                 {
-                    foreach(var cachedFrame in cachedFrames)
+                    foreach (var cachedFrame in cachedFrames)
                     {
                         SaveFrame(cachedFrame);
                     }
@@ -90,7 +97,7 @@ namespace IPCamera.Model.Recording
             }
 
             // Not recording > cache frames
-            else
+            else if (preRecord > 0)
             {
                 // Add to cached
                 cachedFrames.Add(frame);
@@ -116,49 +123,57 @@ namespace IPCamera.Model.Recording
         private bool TimeUp => ShutdownTime <= DateTime.Now;
 
 
-       
-        public Bitrate Bitrate = Bitrate.K8000;
 
 
+
+        /// <summary>
+        /// Ope video writer
+        /// </summary>
         private void OpenRecording()
         {
             writer = new VideoFileWriter();
-
-            writer.Open(GetFileName(), width, height, 8, VideoCodec.MPEG4, (int)Bitrate);
-
-
+            writer.Open(GetFileName(), width, height, 8, VideoCodec.MPEG4, (int)bitrate);
         }
 
+        /// <summary>
+        /// Get file name for this recording
+        /// </summary>
         private string GetFileName()
         {
             return FilePaths.RecordPath() + "/" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".mp4";
         }
 
+        /// <summary>
+        /// Save a frame
+        /// </summary>
+        /// <param name="frame"></param>
         private void SaveFrame(ImageFrame frame)
         {
             // Create a new bitmap.
-            Bitmap bmp = new Bitmap(frame.Width, frame.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            if (saveBitmap == null)
+            {
+                saveBitmap = new Bitmap(frame.Width, frame.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            }
 
             // Lock the bitmap's bits.  
-            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+            Rectangle rect = new Rectangle(0, 0, saveBitmap.Width, saveBitmap.Height);
             System.Drawing.Imaging.BitmapData bmpData =
-                bmp.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite,
-                bmp.PixelFormat);
+                saveBitmap.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite,
+                saveBitmap.PixelFormat);
 
             // Get the address of the first line.
             IntPtr ptr = bmpData.Scan0;
 
             // Declare an array to hold the bytes of the bitmap.
-            int bytes = Math.Abs(bmpData.Stride) * bmp.Height;
+            int bytes = Math.Abs(bmpData.Stride) * saveBitmap.Height;
 
             // Copy the RGB values back to the bitmap
             System.Runtime.InteropServices.Marshal.Copy(frame.Data, 0, ptr, bytes);
 
             // Unlock the bits.
-            bmp.UnlockBits(bmpData);
+            saveBitmap.UnlockBits(bmpData);
 
-            writer.WriteVideoFrame(bmp);
-
+            writer.WriteVideoFrame(saveBitmap);
         }
 
         /// <summary>
