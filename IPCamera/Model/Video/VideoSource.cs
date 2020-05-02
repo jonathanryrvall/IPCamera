@@ -32,7 +32,7 @@ namespace IPCamera.Model
 
         private IntPtr bitmap;
         private int stride;
-     
+
     
 
         public VideoSource (Config.Config config)

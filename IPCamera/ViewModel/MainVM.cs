@@ -30,10 +30,10 @@ namespace IPCamera.ViewModel
         private ViewportMode viewportMode;
         private ImageFrame lastFrame;
         public Config Config => gs.Config;
-        private string motionDetectionHotspots;
+       
         private int activeBlocks;
         private bool motionTriggered;
-        private double motionDetectionHotspotsPercentage;
+      
 
         private System.Windows.Point lastMousePos;
         private float scale = 1f;
@@ -75,11 +75,7 @@ namespace IPCamera.ViewModel
             get => liveImage;
             set => Set(ref liveImage, value);
         }
-        public double MotionDetectionHotspotsPercentage
-        {
-            get => motionDetectionHotspotsPercentage;
-            set => Set(ref motionDetectionHotspotsPercentage, value);
-        }
+   
         public Visibility ShowRecordingFrame
         {
             get => gs.Recorder.IsRecording ? Visibility.Visible : Visibility.Hidden;
@@ -117,12 +113,7 @@ namespace IPCamera.ViewModel
             }
         }
 
-        public string MotionDetectionHotspots
-        {
-            get => motionDetectionHotspots;
-            set => Set(ref motionDetectionHotspots, value);
-        }
-
+     
 
         public int ActiveBlocks
         {
@@ -207,8 +198,7 @@ namespace IPCamera.ViewModel
 
                 MotionTriggered = e.Motion;
                 ActiveBlocks = e.ActiveBlocksCount;
-                MotionDetectionHotspotsPercentage = e.HotspotPercentage;
-                MotionDetectionHotspots = $"{e.HotspotCount} ({e.HotspotPercentage:0.00}%)";
+            
             });
 
         }

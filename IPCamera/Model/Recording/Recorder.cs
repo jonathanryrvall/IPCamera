@@ -1,9 +1,11 @@
 ﻿using Accord.Video.FFMPEG;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -14,11 +16,11 @@ namespace IPCamera.Model.Recording
     /// </summary>
     public class Recorder
     {
-        public bool IsRecording;
+        public volatile bool IsRecording;
+        
         private int frameRate;
 
         private DateTime ShutdownTime;
-        private VideoFileWriter writer;
         private TimeSpan recordTime;
         private List<ImageFrame> cachedFrames = new List<ImageFrame>();
         private int preRecord;
@@ -27,6 +29,9 @@ namespace IPCamera.Model.Recording
         private Bitrate bitrate;
 
         private Bitmap saveBitmap;
+        private BlockingCollection<ImageFrame> queue;
+
+      
 
         /// <summary>
         /// Start recording by setting the shutdown time in the future
@@ -36,11 +41,11 @@ namespace IPCamera.Model.Recording
             // Open recording if its now a renewal of a ongoing recording
             if (!IsRecording)
             {
-                OpenRecording();
+                IsRecording = true;
+                new Thread(OpenWriter).Start();
             }
 
             // Extend the shutdown time
-            IsRecording = true;
             ShutdownTime = DateTime.Now + recordTime;
         }
 
@@ -50,7 +55,6 @@ namespace IPCamera.Model.Recording
         public void Stop()
         {
             IsRecording = false;
-            CloseRecording();
         }
 
         /// <summary>
@@ -62,6 +66,8 @@ namespace IPCamera.Model.Recording
                           int recordTime,
                           Bitrate bitrate)
         {
+            queue = new BlockingCollection<ImageFrame>(new ConcurrentQueue<ImageFrame>());
+
             videoSource.DecodedFrameReceived += VideoSource_DecodedFrameReceived;
             this.frameRate = frameRate;
             this.preRecord = preRecord;
@@ -88,13 +94,13 @@ namespace IPCamera.Model.Recording
                 {
                     foreach (var cachedFrame in cachedFrames)
                     {
-                        SaveFrame(cachedFrame);
+                        queue.Add(cachedFrame);
                     }
                     cachedFrames.Clear();
                 }
 
                 // Save current frame
-                SaveFrame(frame);
+                queue.Add(frame);
             }
 
             // Not recording > cache frames
@@ -123,18 +129,29 @@ namespace IPCamera.Model.Recording
         /// </summary>
         private bool TimeUp => ShutdownTime <= DateTime.Now;
 
-
-
-
-
         /// <summary>
-        /// Ope video writer
+        /// Open writing to file in a separate thread polling a queue of frames
         /// </summary>
-        private void OpenRecording()
+        private void OpenWriter()
         {
-            writer = new VideoFileWriter();
-            writer.Open(GetFileName(), width, height, frameRate, VideoCodec.MPEG4, (int)bitrate);
+            using (var writer = new VideoFileWriter())
+            {
+                writer.Open(GetFileName(), width, height, frameRate, VideoCodec.MPEG4, (int)bitrate);
+
+                while (IsRecording)
+                {
+                    if (queue.TryTake(out ImageFrame frame, 1))
+                    {
+                        SaveFrame(frame, writer);
+                    }
+                }
+
+                writer.Close();
+            }
+
         }
+
+
 
         /// <summary>
         /// Get file name for this recording
@@ -147,8 +164,7 @@ namespace IPCamera.Model.Recording
         /// <summary>
         /// Save a frame
         /// </summary>
-        /// <param name="frame"></param>
-        private void SaveFrame(ImageFrame frame)
+        private void SaveFrame(ImageFrame frame, VideoFileWriter writer)
         {
             // Create a new bitmap.
             if (saveBitmap == null)
@@ -177,15 +193,7 @@ namespace IPCamera.Model.Recording
             writer.WriteVideoFrame(saveBitmap);
         }
 
-        /// <summary>
-        /// Close writing to file
-        /// </summary>
-        private void CloseRecording()
-        {
-            writer.Close();
-            writer.Dispose();
-            writer = null;
-        }
+
 
     }
 }
