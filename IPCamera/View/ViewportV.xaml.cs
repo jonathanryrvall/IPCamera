@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IPCamera.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,5 +25,24 @@ namespace IPCamera.View
         {
             InitializeComponent();
         }
+
+        /// <summary>
+        /// Drag viewport
+        /// </summary>
+        private void borPreview_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            (DataContext as MainVM).borPreview_PreviewMouseMove(sender, e);
+        }
+
+
+        /// <summary>
+        /// Scroll event
+        /// </summary>
+        private void borPreview_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            (DataContext as MainVM).borPreview_PreviewMouseWheel(sender, e);
+        }
+
+       
     }
 }

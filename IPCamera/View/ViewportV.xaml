@@ -10,10 +10,32 @@
     <Grid>
         <Border Margin="0,0,0,40" Background="#222">
             <Grid>
-                <Image SnapsToDevicePixels="True"
-                       Source="{Binding LiveImage}"
-                       Stretch="Uniform"
-                       UseLayoutRounding="True" />
+
+                <Border x:Name="border"
+                        Background="{DynamicResource TextBoxNormalBackground}"
+                        ClipToBounds="True"
+                        PreviewMouseMove="borPreview_PreviewMouseMove"
+                        PreviewMouseWheel="borPreview_PreviewMouseWheel">
+
+                    <Grid Width="{Binding ViewerWidth}"
+                          Height="{Binding ViewerHeight}"
+                          Margin="{Binding ViewerOffset}"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top">
+
+                        <Image SnapsToDevicePixels="True"
+                               Source="{Binding LiveImage}"
+                               Stretch="Uniform"
+                               UseLayoutRounding="True" />
+
+
+
+                    </Grid>
+
+
+
+                </Border>
+
 
                 <Border BorderBrush="Red"
                         BorderThickness="2"
@@ -38,10 +60,5 @@
                   SelectedValue="{Binding ViewportMode}"
                   SelectedValuePath="Key"
                   Text="{Binding ViewportMode}" />
-
-
-        <Label HorizontalAlignment="Right"
-               VerticalAlignment="Bottom"
-               Content="{Binding FPS, FallbackValue='FPS'}" />
     </Grid>
 </UserControl>

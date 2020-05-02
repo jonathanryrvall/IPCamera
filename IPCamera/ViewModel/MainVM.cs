@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight;
@@ -149,7 +151,7 @@ namespace IPCamera.ViewModel
 
 
                 MotionDetectionHotspotsPercentage = e.HotspotPercentage;
-                MotionDetectionHotspots = $"{e.HotspotCount} ({e.HotspotPercentage:0.0}%)";
+                MotionDetectionHotspots = $"{e.HotspotCount} ({e.HotspotPercentage:0.00}%)";
             });
 
         }
@@ -195,6 +197,92 @@ namespace IPCamera.ViewModel
             FrameSaver.Save(lastFrame, FrameSaver.GetTimestampFilename());
         }
 
+       
+        private System.Windows.Point lastMousePos;
+        private float scale = 1f;
+        private double xOffset = 0;
+        private double yOffset = 0;
+      
+
+        public Thickness ViewerOffset
+        {
+            get
+            {
+                return new Thickness(xOffset, yOffset, 0, 0);
+            }
+        }
+        public double ViewerHeight
+        {
+            get
+            {
+                if (lastFrame == null)
+                {
+                    return 1000;
+                }
+                return lastFrame.Height * scale;
+            }
+        }
+        public double ViewerWidth
+        {
+            get
+            {
+                if (lastFrame == null)
+                {
+                    return 1000;
+                }
+                return lastFrame.Width * scale;
+            }
+        }
+
+        /// <summary>
+        /// Drag viewport
+        /// </summary>
+        public void borPreview_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            System.Windows.Point pos = e.GetPosition((Border)sender);
+
+            if (e.LeftButton == MouseButtonState.Pressed ||
+                e.RightButton == MouseButtonState.Pressed ||
+                e.MiddleButton == MouseButtonState.Pressed)
+            {
+                Vector diff = pos - lastMousePos;
+
+                xOffset += diff.X;
+                yOffset += diff.Y;
+
+            }
+
+            lastMousePos = pos;
+            RaisePropertyChanged(nameof(ViewerOffset));
+
+        }
+
+
+        /// <summary>
+        /// Scroll event
+        /// </summary>
+        public void borPreview_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            const float ZOOM_MULTIPLIER = 1.1f;
+
+            // Calculate cursor position before zoom
+            Vector beforePos = new Vector(lastMousePos.X - xOffset, lastMousePos.Y - yOffset);
+            beforePos /= scale;
+
+            // Zoom
+            if (e.Delta > 0) scale *= ZOOM_MULTIPLIER;
+            else scale /= ZOOM_MULTIPLIER;
+
+            beforePos *= scale;
+
+            xOffset = lastMousePos.X - beforePos.X;
+            yOffset = lastMousePos.Y - beforePos.Y;
+            RaisePropertyChanged(nameof(ViewerOffset));
+            RaisePropertyChanged(nameof(ViewerHeight));
+            RaisePropertyChanged(nameof(ViewerWidth));
+        }
+
+       
 
     }
 }
