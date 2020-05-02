@@ -140,7 +140,7 @@ namespace IPCamera.Model.Recording
 
                 while (IsRecording)
                 {
-                    if (queue.TryTake(out ImageFrame frame, 1))
+                    if (queue.TryTake(out ImageFrame frame, 100))
                     {
                         SaveFrame(frame, writer);
                     }
