@@ -32,7 +32,7 @@ namespace IPCamera.Model
         public VideoSource VideoSource;
         public Config.Config Config;
 
-        public IRecorder Recorder;
+        public Recorder Recorder;
         public MotionDetector MotionDetector;
 
         public Config.ConfigMonitor ConfigMonitor;

@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using IPCamera.Model.Recording;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,9 @@ namespace IPCamera.Model.Config
 
         private byte hotspotThreshold = 60;
         private double maxHotspots = 20;
-
+        private int preRecord = 32;
+        private int recordTime = 5;
+        private Bitrate bitrate = Bitrate.K4000;
 
         public string ConnectionString
         {
@@ -33,6 +36,21 @@ namespace IPCamera.Model.Config
             set => Set(ref maxHotspots, value);
         }
 
+        public Bitrate Bitrate
+        {
+            get => bitrate;
+            set => Set(ref bitrate, value);
+        }
+        public int PreRecord
+        {
+            get => preRecord;
+            set => Set(ref preRecord, value);
+        }
+        public int RecordTime
+        {
+            get => recordTime;
+            set => Set(ref recordTime, value);
+        }
         public void AddMissing()
         {
             

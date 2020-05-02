@@ -23,9 +23,10 @@ namespace IPCamera.ViewModel
         private WriteableBitmap liveImage;
         public RelayCommand StartRecordCommand { get; set; }
         public RelayCommand StopRecordCommand { get; set; }
+        public RelayCommand SnapshotCommand { get; set; }
 
         private ViewportMode viewportMode;
-
+        private ImageFrame lastFrame;
         public Config Config => gs.Config;
         private string motionDetectionHotspots;
 
@@ -40,6 +41,10 @@ namespace IPCamera.ViewModel
         {
             get => motionDetectionHotspotsPercentage;
             set => Set(ref motionDetectionHotspotsPercentage, value);
+        }
+        public Visibility ShowRecordingFrame
+        {
+            get => gs.Recorder.IsRecording ? Visibility.Visible : Visibility.Hidden;
         }
 
         public ViewportMode ViewportMode
@@ -89,6 +94,24 @@ namespace IPCamera.ViewModel
         }
 
         /// <summary>
+        /// Get a dictionary of <see cref="Bitrate"/>s
+        /// </summary>
+        public Dictionary<Bitrate, string> Bitrates
+        {
+            get
+            {
+                var bitrates = new Dictionary<Bitrate, string>();
+
+                foreach (Bitrate t in (Bitrate[])Enum.GetValues(typeof(Bitrate)))
+                {
+                    string desc = t.ToString();
+                    bitrates.Add(t, desc);
+                }
+                return bitrates;
+            }
+        }
+
+        /// <summary>
         /// Video source
         /// </summary>
         public MainVM()
@@ -96,8 +119,8 @@ namespace IPCamera.ViewModel
             gs.VideoSource.DecodedFrameReceived += OnFrameReceived;
             gs.MotionDetector.OnMotionDetectionResult += MotionDetector_OnMotionDetectionResult;
             StartRecordCommand = new RelayCommand(gs.Recorder.Start);
-            StopRecordCommand = new RelayCommand(gs.Recorder.Stop);
-
+       //     StopRecordCommand = new RelayCommand(gs.Recorder.Stop);
+            SnapshotCommand = new RelayCommand(Snapshot);
         }
 
 
@@ -116,6 +139,7 @@ namespace IPCamera.ViewModel
                     ShowFrame(e.ResultFrame);
                 }
 
+
                 MotionDetectionHotspotsPercentage = e.HotspotPercentage;
                 MotionDetectionHotspots = $"{e.HotspotCount} ({e.HotspotPercentage:0.0}%)";
             });
@@ -128,13 +152,18 @@ namespace IPCamera.ViewModel
         /// </summary>
         private void OnFrameReceived(object sender, ImageFrame frame)
         {
-            if (ViewportMode == ViewportMode.Image)
+
+            App.Current.Dispatcher.Invoke(() =>
             {
-                App.Current.Dispatcher.Invoke(() =>
+                lastFrame = frame;
+                RaisePropertyChanged(nameof(ShowRecordingFrame));
+
+                if (ViewportMode == ViewportMode.Image)
                 {
                     ShowFrame(frame);
-                });
-            }
+                }
+            });
+
         }
 
         /// <summary>
@@ -149,6 +178,15 @@ namespace IPCamera.ViewModel
 
             LiveImage.WritePixels(new Int32Rect(0, 0, frame.Width, frame.Height), frame.Data, frame.Width * 4, 0);
         }
+
+        /// <summary>
+        /// Take a snapshot
+        /// </summary>
+        private void Snapshot()
+        {
+            FrameSaver.Save(lastFrame, FrameSaver.GetTimestampFilename());
+        }
+
 
     }
 }

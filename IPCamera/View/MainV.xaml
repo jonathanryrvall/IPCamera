@@ -26,7 +26,7 @@
 
         <StackPanel Grid.Column=" 1" Margin="10,20,20,20">
             <StackPanel>
-                <Label Content="Manual recording" FontWeight="Bold" />
+                <Label Content="Tools" FontWeight="Bold" />
                 <Grid Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -37,11 +37,22 @@
                     <Button Grid.Column="0"
                             Height="30"
                             Command="{Binding StartRecordCommand}"
-                            Content="Start record" />
+                            Content="Trigger motion" />
                     <Button Grid.Column="2"
                             Height="30"
-                            Command="{Binding StopRecordCommand}"
-                            Content="Stop record" />
+                            Command="{Binding SnapshotCommand}"
+                            Content="Snapshot" />
+                </Grid>
+
+                <Grid Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+
+
                 </Grid>
 
             </StackPanel>
@@ -77,6 +88,38 @@
                     <Label HorizontalAlignment="Left" Content="Hotspots" />
                     <Label HorizontalAlignment="Right" Content="{Binding MotionDetectionHotspots, FallbackValue='HOTSPOTS'}" />
                 </Grid>
+            </StackPanel>
+
+            <StackPanel Margin="0,25,0,0">
+                <Label Content="Recording" FontWeight="Bold" />
+                <Grid Margin="0,10,0,0">
+                    <Label Content="Bitrate" />
+                    <ComboBox Width="180"
+                              HorizontalAlignment="Right"
+                              DisplayMemberPath="Value"
+                              ItemsSource="{Binding Path=Bitrates}"
+                              SelectedValue="{Binding Config.Bitrate}"
+                              SelectedValuePath="Key"
+                              Text="{Binding Config.Bitrate}" />
+
+                </Grid>
+
+                <Grid Margin="0,10,0,0">
+                    <Label Content="Pre-record (frames)" />
+                    <TextBox Width="100"
+                             HorizontalAlignment="Right"
+                             Text="{Binding Config.PreRecord}" />
+
+                </Grid>
+
+                <Grid Margin="0,10,0,0">
+                    <Label Content="Record time (sec)" />
+                    <TextBox Width="100"
+                             HorizontalAlignment="Right"
+                             Text="{Binding Config.RecordTime}" />
+
+                </Grid>
+
             </StackPanel>
 
 

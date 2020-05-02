@@ -9,10 +9,16 @@
              mc:Ignorable="d">
     <Grid>
         <Border Margin="0,0,0,40" Background="#222">
-            <Image SnapsToDevicePixels="True"
-                   Source="{Binding LiveImage}"
-                   Stretch="Uniform"
-                   UseLayoutRounding="True" />
+            <Grid>
+                <Image SnapsToDevicePixels="True"
+                       Source="{Binding LiveImage}"
+                       Stretch="Uniform"
+                       UseLayoutRounding="True" />
+
+                <Border BorderBrush="Red"
+                        BorderThickness="2"
+                        Visibility="{Binding ShowRecordingFrame}" />
+            </Grid>
         </Border>
         <ProgressBar Height="8"
                      Margin="0,0,0,30"

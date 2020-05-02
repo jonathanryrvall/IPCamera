@@ -33,9 +33,15 @@ namespace IPCamera
             gs.VideoSource = new VideoSource(gs.Config);
 
             // Setup a recorder
-            gs.Recorder = new ImageRecorder();
-            gs.Recorder.Setup(gs.VideoSource, FilePaths.RecordPath());
-
+            gs.Recorder = new Recorder()
+            {
+                Bitrate = gs.Config.Bitrate
+            };
+            gs.Recorder.Setup(gs.VideoSource,
+                FilePaths.RecordPath(),
+                gs.Config.PreRecord, 
+                gs.Config.RecordTime);
+         
             // Setup motion detection
             gs.MotionDetector = new Model.MotionDetection.MotionDetector(gs.VideoSource, gs.Config);
             gs.MotionDetector.OnMotionDetectionResult += gs.MotionDetector_OnMotionDetectionResult;
