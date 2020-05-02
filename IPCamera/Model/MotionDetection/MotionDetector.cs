@@ -16,9 +16,7 @@ namespace IPCamera.Model.MotionDetection
         private ImageFrame referenceFrame = null;
         private byte hotspotThreshold;
         private ImageFrame resultFrame;
-
-        private double maxHotspots;
-
+   
         public ResultMode ResultMode;
         private DateTime LastRemodel;
         private TimeSpan remodelInterval;
@@ -27,7 +25,9 @@ namespace IPCamera.Model.MotionDetection
         private int blockThreshold;
         private int blockSize;
 
-
+        /// <summary>
+        /// Initializes a new instance of <see cref="MotionDetector"/>
+        /// </summary>
         public MotionDetector(VideoSource videoSource,
                               Config.Config config)
         {
@@ -43,7 +43,6 @@ namespace IPCamera.Model.MotionDetection
         public void UpdateConfig(Config.Config config)
         {
             hotspotThreshold = config.HotspotThreshold;
-            maxHotspots = config.MaxHotspots;
             remodelInterval = TimeSpan.FromMilliseconds(config.RemodelInterval);
             remodelStrength = config.RemodelStrength;
             blockSize = config.BlockSize;
@@ -103,17 +102,16 @@ namespace IPCamera.Model.MotionDetection
                 }
             }
 
+            // Determine if reference frame should be remodelled
             bool doRemodel = DateTime.Now > LastRemodel + remodelInterval;
             if (doRemodel)
             {
                 LastRemodel = DateTime.Now;
             }
 
-
+            
             for (int p = 0; p < pixelCount; p++)
             {
-               
-
                 byte rNew = newFrame.Data[p * 4 + 2];
                 byte gNew = newFrame.Data[p * 4 + 1];
                 byte bNew = newFrame.Data[p * 4 + 0];
@@ -122,15 +120,18 @@ namespace IPCamera.Model.MotionDetection
                 byte gOld = referenceFrame.Data[p * 4 + 1];
                 byte bOld = referenceFrame.Data[p * 4 + 0];
 
-
+                // Calculate 
                 byte rDiff = rNew > rOld ? (byte)(rNew - rOld) : (byte)(rOld - rNew);
                 byte gDiff = gNew > gOld ? (byte)(gNew - gOld) : (byte)(gOld - gNew);
                 byte bDiff = bNew > bOld ? (byte)(bNew - bOld) : (byte)(bOld - bNew);
 
+                // 
                 bool isHotspot = rDiff > hotspotThreshold ||
                                  gDiff > hotspotThreshold ||
                                  bDiff > hotspotThreshold;
 
+
+                // Remodel the reference frame
                 if (doRemodel)
                 {
                     byte remodelR = rDiff > remodelStrength ? remodelStrength : rDiff;
@@ -163,15 +164,10 @@ namespace IPCamera.Model.MotionDetection
                     {
                         referenceFrame.Data[p * 4 + 0] -= remodelB;
                     }
-
-
-
                 }
 
 
-
-
-
+                // Output difference as result map
                 if (ResultMode == ResultMode.Diff)
                 {
                     resultFrame.Data[p * 4 + 0] = rDiff;
@@ -179,6 +175,7 @@ namespace IPCamera.Model.MotionDetection
                     resultFrame.Data[p * 4 + 2] = bDiff;
                 }
 
+                // Output difference after threshold filter as result map
                 else if (ResultMode == ResultMode.Threshold)
                 {
                     resultFrame.Data[p * 4 + 0] = 0;
@@ -186,6 +183,7 @@ namespace IPCamera.Model.MotionDetection
                     resultFrame.Data[p * 4 + 2] = isHotspot ? (byte)255 : (byte)0;
                 }
 
+                // Difference after threshold filter applied on the current frame as result map
                 else if (ResultMode == ResultMode.Combined)
                 {
                     byte v = (byte)(rNew / 2);
@@ -194,6 +192,7 @@ namespace IPCamera.Model.MotionDetection
                     resultFrame.Data[p * 4 + 2] = isHotspot ? byte.MaxValue : v;
                 }
 
+                // Count 
                 if (isHotspot)
                 {
                     hotSpotCount++;
@@ -208,11 +207,11 @@ namespace IPCamera.Model.MotionDetection
 
             }
 
+            // Write active blocks as bitmap
             if (ResultMode == ResultMode.Blocks)
             {
                 for (int p = 0; p < pixelCount; p++)
                 {
-
                     int x = p % newFrame.Width;
                     int y = (p - x) / newFrame.Width;
                     int bX = x / blockSize;
@@ -222,10 +221,10 @@ namespace IPCamera.Model.MotionDetection
                     resultFrame.Data[p * 4 + 0] = 0;
                     resultFrame.Data[p * 4 + 1] = 0;
                     resultFrame.Data[p * 4 + 2] = blocks[bI] > blockThreshold ? (byte)255 : (byte)0;
-
                 }
             }
 
+            // Write active blocks onto current frame
             if (ResultMode == ResultMode.BlocksCombined)
             {
                 for (int p = 0; p < pixelCount; p++)
@@ -242,7 +241,6 @@ namespace IPCamera.Model.MotionDetection
                     resultFrame.Data[p * 4 + 0] = v;
                     resultFrame.Data[p * 4 + 1] = v;
                     resultFrame.Data[p * 4 + 2] = blocks[bI] > blockThreshold ? (byte)255 : v;
-
                 }
             }
 

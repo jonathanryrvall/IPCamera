@@ -14,7 +14,6 @@ namespace IPCamera.Model.Config
         private string connectionString = "rtsp://admin:admins@192.168.1.101/user=admin_password=_channel=1_stream=0.sdp";
 
         private byte hotspotThreshold = 60;
-        private double maxHotspots = 20;
         private int preRecord = 32;
         private int recordTime = 5;
         private Bitrate bitrate = Bitrate.K4000;
@@ -65,13 +64,6 @@ namespace IPCamera.Model.Config
             get => hotspotThreshold;
             set => Set(ref hotspotThreshold, value);
         }
-
-        public double MaxHotspots
-        {
-            get => maxHotspots;
-            set => Set(ref maxHotspots, value);
-        }
-
         public int RemodelInterval
         {
             get => remodelInterval;

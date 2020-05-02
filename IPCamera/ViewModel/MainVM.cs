@@ -35,6 +35,41 @@ namespace IPCamera.ViewModel
         private bool motionTriggered;
         private double motionDetectionHotspotsPercentage;
 
+        private System.Windows.Point lastMousePos;
+        private float scale = 1f;
+        private double xOffset = 0;
+        private double yOffset = 0;
+
+
+        public Thickness ViewerOffset
+        {
+            get
+            {
+                return new Thickness(xOffset, yOffset, 0, 0);
+            }
+        }
+        public double ViewerHeight
+        {
+            get
+            {
+                if (lastFrame == null)
+                {
+                    return 1000;
+                }
+                return lastFrame.Height * scale;
+            }
+        }
+        public double ViewerWidth
+        {
+            get
+            {
+                if (lastFrame == null)
+                {
+                    return 1000;
+                }
+                return lastFrame.Width * scale;
+            }
+        }
         public WriteableBitmap LiveImage
         {
             get => liveImage;
@@ -102,6 +137,19 @@ namespace IPCamera.ViewModel
 
 
         /// <summary>
+        /// Video source
+        /// </summary>
+        public MainVM()
+        {
+            gs.VideoSource.DecodedFrameReceived += OnFrameReceived;
+            gs.MotionDetector.OnMotionDetectionResult += MotionDetector_OnMotionDetectionResult;
+            StartRecordCommand = new RelayCommand(gs.Recorder.Start);
+            //     StopRecordCommand = new RelayCommand(gs.Recorder.Stop);
+            SnapshotCommand = new RelayCommand(Snapshot);
+        }
+
+
+        /// <summary>
         /// Get a dictionary of <see cref="Model.ViewportMode"/>s
         /// </summary>
         public Dictionary<ViewportMode, string> ViewportModes
@@ -135,18 +183,6 @@ namespace IPCamera.ViewModel
                 }
                 return bitrates;
             }
-        }
-
-        /// <summary>
-        /// Video source
-        /// </summary>
-        public MainVM()
-        {
-            gs.VideoSource.DecodedFrameReceived += OnFrameReceived;
-            gs.MotionDetector.OnMotionDetectionResult += MotionDetector_OnMotionDetectionResult;
-            StartRecordCommand = new RelayCommand(gs.Recorder.Start);
-            //     StopRecordCommand = new RelayCommand(gs.Recorder.Stop);
-            SnapshotCommand = new RelayCommand(Snapshot);
         }
 
 
@@ -219,41 +255,7 @@ namespace IPCamera.ViewModel
         }
 
 
-        private System.Windows.Point lastMousePos;
-        private float scale = 1f;
-        private double xOffset = 0;
-        private double yOffset = 0;
-
-
-        public Thickness ViewerOffset
-        {
-            get
-            {
-                return new Thickness(xOffset, yOffset, 0, 0);
-            }
-        }
-        public double ViewerHeight
-        {
-            get
-            {
-                if (lastFrame == null)
-                {
-                    return 1000;
-                }
-                return lastFrame.Height * scale;
-            }
-        }
-        public double ViewerWidth
-        {
-            get
-            {
-                if (lastFrame == null)
-                {
-                    return 1000;
-                }
-                return lastFrame.Width * scale;
-            }
-        }
+     
 
         /// <summary>
         /// Drag viewport
@@ -275,7 +277,6 @@ namespace IPCamera.ViewModel
 
             lastMousePos = pos;
             RaisePropertyChanged(nameof(ViewerOffset));
-
         }
 
 
