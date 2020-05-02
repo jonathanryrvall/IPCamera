@@ -48,7 +48,10 @@ namespace IPCamera.Model
         {
             if (e.Motion)
             {
-                Recorder.Start();
+                if (new Scheduling.ScheduleEvaluator(Config.Schedule).CanRecord())
+                {
+                    Recorder.Start();
+                }
             }
         }
     }

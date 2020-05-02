@@ -10,6 +10,8 @@ namespace IPCamera.Model
     {
         Image,
         MotionDetectionDiff,
-        MotionDetectionThreshold
+        MotionDetectionThreshold,
+        CombinedThreshold,
+        Reference
     }
 }

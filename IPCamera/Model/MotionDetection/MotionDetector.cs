@@ -13,19 +13,22 @@ namespace IPCamera.Model.MotionDetection
     {
         public event EventHandler<MotionDetectionResult> OnMotionDetectionResult;
 
-        private ImageFrame lastFrame = null;
+        private ImageFrame referenceFrame = null;
         private byte hotspotThreshold;
         private ImageFrame resultFrame;
 
         private double maxHotspots;
 
         public ResultMode ResultMode;
+        private DateTime LastRemodel;
+        private TimeSpan remodelInterval;
+        private byte remodelStrength;
 
         public MotionDetector(VideoSource videoSource,
                               Config.Config config)
         {
             videoSource.DecodedFrameReceived += VideoSource_DecodedFrameReceived;
-            
+
             UpdateConfig(config);
         }
 
@@ -37,6 +40,8 @@ namespace IPCamera.Model.MotionDetection
         {
             hotspotThreshold = config.HotspotThreshold;
             maxHotspots = config.MaxHotspots;
+            remodelInterval = TimeSpan.FromMilliseconds(config.RemodelInterval);
+            remodelStrength = config.RemodelStrength;
         }
 
         /// <summary>
@@ -52,20 +57,23 @@ namespace IPCamera.Model.MotionDetection
         /// </summary>
         private void DetectMotion(ImageFrame frame)
         {
-            if (lastFrame != null)
+            if (referenceFrame != null)
             {
-                var det = RunKernel(frame, lastFrame);
+                var det = RunKernel(frame);
                 OnMotionDetectionResult?.Invoke(this, det);
             }
+            else
+            {
+                LastRemodel = DateTime.Now;
+                referenceFrame = frame;
+            }
 
-            lastFrame = frame;
         }
 
         /// <summary>
         /// Count how many pixels exceeds threshold
         /// </summary>
-        private MotionDetectionResult RunKernel(ImageFrame newFrame,
-                                                ImageFrame oldFrame)
+        private MotionDetectionResult RunKernel(ImageFrame newFrame)
         {
             int pixelCount = newFrame.Width * newFrame.Height;
             int hotSpotCount = 0;
@@ -85,7 +93,12 @@ namespace IPCamera.Model.MotionDetection
                 }
             }
 
-
+            bool doRemodel = DateTime.Now > LastRemodel + remodelInterval;
+            if (doRemodel)
+            {
+                LastRemodel = DateTime.Now;
+            }
+         
 
             for (int p = 0; p < pixelCount; p++)
             {
@@ -93,9 +106,9 @@ namespace IPCamera.Model.MotionDetection
                 byte gNew = newFrame.Data[p * 4 + 1];
                 byte bNew = newFrame.Data[p * 4 + 0];
 
-                byte rOld = oldFrame.Data[p * 4 + 2];
-                byte gOld = oldFrame.Data[p * 4 + 1];
-                byte bOld = oldFrame.Data[p * 4 + 0];
+                byte rOld = referenceFrame.Data[p * 4 + 2];
+                byte gOld = referenceFrame.Data[p * 4 + 1];
+                byte bOld = referenceFrame.Data[p * 4 + 0];
 
 
                 byte rDiff = rNew > rOld ? (byte)(rNew - rOld) : (byte)(rOld - rNew);
@@ -105,6 +118,47 @@ namespace IPCamera.Model.MotionDetection
                 bool isHotspot = rDiff > hotspotThreshold ||
                                  gDiff > hotspotThreshold ||
                                  bDiff > hotspotThreshold;
+
+                if (doRemodel)
+                {
+                    byte remodelR = rDiff > remodelStrength ? remodelStrength : rDiff;
+                    byte remodelG = gDiff > remodelStrength ? remodelStrength : gDiff;
+                    byte remodelB = bDiff > remodelStrength ? remodelStrength : bDiff;
+
+                    if (rNew > rOld)
+                    {
+                        referenceFrame.Data[p * 4 + 2] += remodelR;
+                    }
+                    else
+                    {
+                        referenceFrame.Data[p * 4 + 2] -= remodelR;
+                    }
+
+                    if (gNew > gOld)
+                    {
+                        referenceFrame.Data[p * 4 + 1] += remodelG;
+                    }
+                    else
+                    {
+                        referenceFrame.Data[p * 4 + 1] -= remodelG;
+                    }
+
+                    if (bNew > bOld)
+                    {
+                        referenceFrame.Data[p * 4 + 0] += remodelB;
+                    }
+                    else
+                    {
+                        referenceFrame.Data[p * 4 + 0] -= remodelB;
+                    }
+
+                 
+
+                }
+               
+
+
+
 
                 if (ResultMode == ResultMode.Diff)
                 {
@@ -120,15 +174,31 @@ namespace IPCamera.Model.MotionDetection
                     resultFrame.Data[p * 4 + 2] = isHotspot ? (byte)255 : (byte)0;
                 }
 
+                else if (ResultMode == ResultMode.Combined)
+                {
+                    byte v = (byte)(rNew / 2);
+                    resultFrame.Data[p * 4 + 0] = v;
+                    resultFrame.Data[p * 4 + 1] = v;
+                    resultFrame.Data[p * 4 + 2] = isHotspot ? byte.MaxValue : v;
+                }
+
                 if (isHotspot)
                 {
                     hotSpotCount++;
                 }
-           
+
             }
 
             MotionDetectionResult result = new MotionDetectionResult();
-            result.ResultFrame = resultFrame;
+            if (ResultMode == ResultMode.Reference)
+            {
+                result.ResultFrame = referenceFrame;
+            }
+            else
+            {
+                result.ResultFrame = resultFrame;
+            }
+
             result.HotspotCount = hotSpotCount;
             result.HotspotPercentage = ((double)hotSpotCount / (double)pixelCount) * 100;
             result.Motion = result.HotspotPercentage > maxHotspots;

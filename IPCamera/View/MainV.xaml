@@ -84,6 +84,23 @@
                             Value="{Binding Config.MaxHotspots}" />
                 </Grid>
 
+
+                <Grid Margin="0,10,0,0">
+                    <Label Content="Remodel interval(ms)" />
+                    <TextBox Width="100"
+                             HorizontalAlignment="Right"
+                             Text="{Binding Config.RemodelInterval}" />
+
+                </Grid>
+
+                <Grid Margin="0,10,0,0">
+                    <Label Content="Remodel strength" />
+                    <TextBox Width="100"
+                             HorizontalAlignment="Right"
+                             Text="{Binding Config.RemodelStrength}" />
+
+                </Grid>
+
                 <Grid Margin="0,10,0,0">
                     <Label HorizontalAlignment="Left" Content="Hotspots" />
                     <Label HorizontalAlignment="Right" Content="{Binding MotionDetectionHotspots, FallbackValue='HOTSPOTS'}" />

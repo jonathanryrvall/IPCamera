@@ -9,6 +9,8 @@ namespace IPCamera.Model.MotionDetection
     public enum ResultMode
     {
         Diff,
-        Threshold
+        Threshold,
+        Reference,
+        Combined
     }
 }

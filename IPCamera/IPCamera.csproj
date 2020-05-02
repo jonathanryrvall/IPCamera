@@ -137,6 +137,9 @@
     <Compile Include="Model\Recording\Bitrate.cs" />
     <Compile Include="Model\Recording\FrameSaver.cs" />
     <Compile Include="Model\Recording\Recorder.cs" />
+    <Compile Include="Model\Scheduling\InactivePeriod.cs" />
+    <Compile Include="Model\Scheduling\Schedule.cs" />
+    <Compile Include="Model\Scheduling\ScheduleEvaluator.cs" />
     <Compile Include="View\ViewportV.xaml.cs">
       <DependentUpon>ViewportV.xaml</DependentUpon>
     </Compile>

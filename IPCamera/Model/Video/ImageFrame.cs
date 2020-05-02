@@ -11,5 +11,8 @@ namespace IPCamera.Model
         public byte[] Data;
         public int Width;
         public int Height;
+      
+
+       
     }
 }

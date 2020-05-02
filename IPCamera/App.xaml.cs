@@ -22,10 +22,7 @@ namespace IPCamera
 
             // Read config
             gs.Config = ConfigSaverLoader.Load<Config>(FilePaths.ConfigPath());
-            if (!File.Exists(FilePaths.ConfigPath()))
-            {
-                ConfigSaverLoader.Save(gs.Config, FilePaths.ConfigPath());
-            }
+            ConfigSaverLoader.Save(gs.Config, FilePaths.ConfigPath());
             gs.ConfigMonitor = new ConfigMonitor(gs.Config);
             gs.ConfigMonitor.ConfigChanged += gs.ConfigMonitor_ConfigChanged;
 

@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using IPCamera.Model.Recording;
+using IPCamera.Model.Scheduling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,10 @@ namespace IPCamera.Model.Config
         private int preRecord = 32;
         private int recordTime = 5;
         private Bitrate bitrate = Bitrate.K4000;
+        private byte remodelStrength = 10;
+        private int remodelInterval = 500;
+        private Schedule schedule;
+
 
         public string ConnectionString
         {
@@ -36,6 +41,19 @@ namespace IPCamera.Model.Config
             set => Set(ref maxHotspots, value);
         }
 
+        public int RemodelInterval
+        {
+            get => remodelInterval;
+            set => Set(ref remodelInterval, value);
+        }
+
+        public byte RemodelStrength
+        {
+            get => remodelStrength;
+            set => Set(ref remodelStrength, value);
+        }
+
+
         public Bitrate Bitrate
         {
             get => bitrate;
@@ -51,6 +69,12 @@ namespace IPCamera.Model.Config
             get => recordTime;
             set => Set(ref recordTime, value);
         }
+        public Schedule Schedule
+        {
+            get => schedule;
+            set => Set(ref schedule, value);
+        }
+
         public void AddMissing()
         {
             
