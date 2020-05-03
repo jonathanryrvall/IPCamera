@@ -23,6 +23,7 @@ namespace IPCamera.Model.Config
         private int blockSize = 40;
         private int blockThreshold = 270;
         private int minActiveBlocks = 4;
+        private int timelapseIntervalMinutes = 2;
 
         private Schedule schedule = new Schedule()
         {
@@ -74,6 +75,12 @@ namespace IPCamera.Model.Config
         {
             get => frameRate;
             set => Set(ref frameRate, value);
+        }
+
+        public int TimelapseIntervalMinutes
+        {
+            get => timelapseIntervalMinutes;
+            set => Set(ref timelapseIntervalMinutes, value);
         }
 
 

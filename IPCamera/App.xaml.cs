@@ -44,6 +44,8 @@ namespace IPCamera
             gs.Logger = new Logger();
             gs.Logger.NewLog("Startup!");
 
+            // Setup a timelapser
+            gs.Timelapser = new Timelapser(gs.VideoSource, gs.Config);
 
             // Start main window
             application.Run(new MainV());

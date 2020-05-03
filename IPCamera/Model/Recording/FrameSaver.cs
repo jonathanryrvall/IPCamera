@@ -27,9 +27,9 @@ namespace IPCamera.Model.Recording
             }
         }
 
-        public static string GetTimestampFilename()
+        public static string GetTimestampFilename(string path)
         {
-            return FilePaths.RecordPath() + "/" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".png";
+            return path + "/" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".png";
         }
     }
 }

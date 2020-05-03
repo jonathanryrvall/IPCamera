@@ -38,6 +38,7 @@ namespace IPCamera.Model
         public Config.ConfigMonitor ConfigMonitor;
 
         public Logger Logger;
+        public Timelapser Timelapser;
 
         public void ConfigMonitor_ConfigChanged(object sender, EventArgs e)
         {
