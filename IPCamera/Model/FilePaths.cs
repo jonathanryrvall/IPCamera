@@ -21,6 +21,14 @@ namespace IPCamera.Model
             return startupPath + "record";
         }
 
+        public static string TimelapsePath()
+        {
+            if (!Directory.Exists(startupPath + "timelapse"))
+                Directory.CreateDirectory(startupPath + "timelapse");
+
+            return startupPath + "timelapse";
+        }
+
 
         public static string LogsPath()
         {

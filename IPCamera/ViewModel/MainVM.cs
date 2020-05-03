@@ -241,7 +241,7 @@ namespace IPCamera.ViewModel
         /// </summary>
         private void Snapshot()
         {
-            FrameSaver.Save(lastFrame, FrameSaver.GetTimestampFilename());
+            FrameSaver.Save(lastFrame, FrameSaver.GetTimestampFilename(FilePaths.RecordPath()));
         }
 
 
