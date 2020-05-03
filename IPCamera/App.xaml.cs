@@ -40,6 +40,10 @@ namespace IPCamera
             gs.MotionDetector = new Model.MotionDetection.MotionDetector(gs.VideoSource, gs.Config);
             gs.MotionDetector.OnMotionDetectionResult += gs.MotionDetector_OnMotionDetectionResult;
 
+            // Setup a logger
+            gs.Logger = new Logger();
+            gs.Logger.NewLog("Startup!");
+
 
             // Start main window
             application.Run(new MainV());
