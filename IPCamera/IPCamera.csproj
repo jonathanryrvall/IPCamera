@@ -133,6 +133,7 @@
   <ItemGroup>
     <Compile Include="Model\Config\ConfigExtensions.cs" />
     <Compile Include="Model\Config\ConfigMonitor.cs" />
+    <Compile Include="Model\Logger.cs" />
     <Compile Include="Model\MotionDetection\ResultMode.cs" />
     <Compile Include="Model\Recording\Bitrate.cs" />
     <Compile Include="Model\Recording\FrameSaver.cs" />

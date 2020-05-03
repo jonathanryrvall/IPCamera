@@ -22,11 +22,17 @@ namespace IPCamera.Model
         }
 
 
-   
+        public static string LogsPath()
+        {
+            if (!Directory.Exists(startupPath + "logs"))
+                Directory.CreateDirectory(startupPath + "logs");
 
-      
+            return startupPath + "logs";
+        }
 
-     
+
+
+
 
 
         /// <summary>
