@@ -13,16 +13,16 @@ namespace IPCamera.Model.Config
     {
         private string connectionString = "rtsp://admin:admins@192.168.1.101/user=admin_password=_channel=1_stream=0.sdp";
 
-        private byte hotspotThreshold = 60;
+        private byte hotspotThreshold = 40;
         private int preRecord = 32;
         private int recordTime = 5;
-        private Bitrate bitrate = Bitrate.K4000;
-        private byte remodelStrength = 10;
-        private int remodelInterval = 500;
+        private Bitrate bitrate = Bitrate.K8000;
+        private byte remodelStrength = 8;
+        private int remodelInterval = 300;
         private int frameRate = 8;
         private int blockSize = 40;
-        private int blockThreshold = 100;
-        private int minActiveBlocks = 2;
+        private int blockThreshold = 270;
+        private int minActiveBlocks = 4;
 
         private Schedule schedule = new Schedule()
         {
